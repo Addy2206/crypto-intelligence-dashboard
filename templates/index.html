@@ -314,7 +314,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32
 </footer>
 
 <script>
-const API = 'http://localhost:5000/api';
+const API = window.location.origin + '/api';
 
 const COINS_META = {
   bitcoin:     {symbol:'BTC',name:'Bitcoin', logo:'https://cryptologos.cc/logos/bitcoin-btc-logo.png',    color:'#f0a500'},
