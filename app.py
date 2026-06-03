@@ -1,615 +1,369 @@
-from flask import Flask, render_template, jsonify, request
+"""
+CIPHER — Crypto Intelligence Platform
+Python Flask Backend using yfinance
+
+STEP 1 — Install dependencies:
+  pip install flask flask-cors yfinance
+
+STEP 2 — Run this file:
+  python app.py
+
+Backend will start at: http://localhost:5000
+"""
+
+from flask import Flask, jsonify, request, render_template
+from flask_cors import CORS
 import yfinance as yf
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
+import math
 import time
-import threading
+from functools import wraps
 
 app = Flask(__name__)
+CORS(app)
 
-# ── Constants ─────────────────────────────────────────────────────────
+# ── Simple in-memory cache ─────────────────────────────────────────────────
+_cache = {}
+
+def cached(ttl_seconds=60):
+    """Decorator: cache the return value of a function for ttl_seconds."""
+    def decorator(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            key = (fn.__name__, args, tuple(sorted(kwargs.items())))
+            entry = _cache.get(key)
+            if entry and (time.time() - entry["ts"] < ttl_seconds):
+                return entry["val"]
+            result = fn(*args, **kwargs)
+            _cache[key] = {"val": result, "ts": time.time()}
+            return result
+        return wrapper
+    return decorator
+
+# ── 50+ Coins ──────────────────────────────────────────────────────────────
 COINS = {
-    "BTC-USD": "Bitcoin",
-    "ETH-USD": "Ethereum",
-    "SOL-USD": "Solana"
+    # ── Top-cap
+    "bitcoin":       {"symbol": "BTC",   "ticker": "BTC-USD",   "name": "Bitcoin",        "logo": "https://cryptologos.cc/logos/bitcoin-btc-logo.png"},
+    "ethereum":      {"symbol": "ETH",   "ticker": "ETH-USD",   "name": "Ethereum",       "logo": "https://cryptologos.cc/logos/ethereum-eth-logo.png"},
+    "binancecoin":   {"symbol": "BNB",   "ticker": "BNB-USD",   "name": "BNB",            "logo": "https://cryptologos.cc/logos/binancecoin-bnb-logo.png"},
+    "solana":        {"symbol": "SOL",   "ticker": "SOL-USD",   "name": "Solana",         "logo": "https://cryptologos.cc/logos/solana-sol-logo.png"},
+    "ripple":        {"symbol": "XRP",   "ticker": "XRP-USD",   "name": "XRP",            "logo": "https://cryptologos.cc/logos/xrp-xrp-logo.png"},
+    "cardano":       {"symbol": "ADA",   "ticker": "ADA-USD",   "name": "Cardano",        "logo": "https://cryptologos.cc/logos/cardano-ada-logo.png"},
+    "avalanche":     {"symbol": "AVAX",  "ticker": "AVAX-USD",  "name": "Avalanche",      "logo": "https://cryptologos.cc/logos/avalanche-avax-logo.png"},
+    "dogecoin":      {"symbol": "DOGE",  "ticker": "DOGE-USD",  "name": "Dogecoin",       "logo": "https://cryptologos.cc/logos/dogecoin-doge-logo.png"},
+    "polkadot":      {"symbol": "DOT",   "ticker": "DOT-USD",   "name": "Polkadot",       "logo": "https://cryptologos.cc/logos/polkadot-new-dot-logo.png"},
+    "tron":          {"symbol": "TRX",   "ticker": "TRX-USD",   "name": "TRON",           "logo": "https://cryptologos.cc/logos/tron-trx-logo.png"},
+    # ── DeFi / Smart-contract
+    "chainlink":     {"symbol": "LINK",  "ticker": "LINK-USD",  "name": "Chainlink",      "logo": "https://cryptologos.cc/logos/chainlink-link-logo.png"},
+    "polygon":       {"symbol": "POL",   "ticker": "POL-USD",   "name": "Polygon",        "logo": "https://cryptologos.cc/logos/polygon-matic-logo.png"},
+    "uniswap":       {"symbol": "UNI",   "ticker": "UNI-USD",   "name": "Uniswap",        "logo": "https://cryptologos.cc/logos/uniswap-uni-logo.png"},
+    "litecoin":      {"symbol": "LTC",   "ticker": "LTC-USD",   "name": "Litecoin",       "logo": "https://cryptologos.cc/logos/litecoin-ltc-logo.png"},
+    "stellar":       {"symbol": "XLM",   "ticker": "XLM-USD",   "name": "Stellar",        "logo": "https://cryptologos.cc/logos/stellar-xlm-logo.png"},
+    "cosmos":        {"symbol": "ATOM",  "ticker": "ATOM-USD",  "name": "Cosmos",         "logo": "https://cryptologos.cc/logos/cosmos-atom-logo.png"},
+    "monero":        {"symbol": "XMR",   "ticker": "XMR-USD",   "name": "Monero",         "logo": "https://cryptologos.cc/logos/monero-xmr-logo.png"},
+    "ethereum-classic": {"symbol": "ETC","ticker": "ETC-USD",   "name": "Ethereum Classic","logo": "https://cryptologos.cc/logos/ethereum-classic-etc-logo.png"},
+    "vechain":       {"symbol": "VET",   "ticker": "VET-USD",   "name": "VeChain",        "logo": "https://cryptologos.cc/logos/vechain-vet-logo.png"},
+    "filecoin":      {"symbol": "FIL",   "ticker": "FIL-USD",   "name": "Filecoin",       "logo": "https://cryptologos.cc/logos/filecoin-fil-logo.png"},
+    # ── Layer-2 / Newer
+    "near":          {"symbol": "NEAR",  "ticker": "NEAR-USD",  "name": "NEAR Protocol",  "logo": "https://cryptologos.cc/logos/near-protocol-near-logo.png"},
+    "aave":          {"symbol": "AAVE",  "ticker": "AAVE-USD",  "name": "Aave",           "logo": "https://cryptologos.cc/logos/aave-aave-logo.png"},
+    "algorand":      {"symbol": "ALGO",  "ticker": "ALGO-USD",  "name": "Algorand",       "logo": "https://cryptologos.cc/logos/algorand-algo-logo.png"},
+    "aptos":         {"symbol": "APT",   "ticker": "APT-USD",   "name": "Aptos",          "logo": "https://cryptologos.cc/logos/aptos-apt-logo.png"},
+    "arbitrum":      {"symbol": "ARB",   "ticker": "ARB-USD",   "name": "Arbitrum",       "logo": "https://cryptologos.cc/logos/arbitrum-arb-logo.png"},
+    "optimism":      {"symbol": "OP",    "ticker": "OP-USD",    "name": "Optimism",       "logo": "https://cryptologos.cc/logos/optimism-ethereum-op-logo.png"},
+    "injective":     {"symbol": "INJ",   "ticker": "INJ-USD",   "name": "Injective",      "logo": "https://cryptologos.cc/logos/injective-inj-logo.png"},
+    "sui":           {"symbol": "SUI",   "ticker": "SUI-USD",   "name": "Sui",            "logo": "https://cryptologos.cc/logos/sui-sui-logo.png"},
+    "sei":           {"symbol": "SEI",   "ticker": "SEI-USD",   "name": "Sei",            "logo": "https://cryptologos.cc/logos/sei-sei-logo.png"},
+    "celestia":      {"symbol": "TIA",   "ticker": "TIA-USD",   "name": "Celestia",       "logo": "https://cryptologos.cc/logos/celestia-tia-logo.png"},
+    # ── Exchange tokens
+    "okb":           {"symbol": "OKB",   "ticker": "OKB-USD",   "name": "OKB",            "logo": "https://cryptologos.cc/logos/okb-okb-logo.png"},
+    "kucoin-token":  {"symbol": "KCS",   "ticker": "KCS-USD",   "name": "KuCoin Token",   "logo": "https://cryptologos.cc/logos/kucoin-token-kcs-logo.png"},
+    # ── Meme coins
+    "shiba-inu":     {"symbol": "SHIB",  "ticker": "SHIB-USD",  "name": "Shiba Inu",      "logo": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png"},
+    "pepe":          {"symbol": "PEPE",  "ticker": "PEPE-USD",  "name": "Pepe",           "logo": "https://cryptologos.cc/logos/pepe-pepe-logo.png"},
+    "bonk":          {"symbol": "BONK",  "ticker": "BONK-USD",  "name": "Bonk",           "logo": "https://cryptologos.cc/logos/bonk1-bonk-logo.png"},
+    # ── Infrastructure / Web3
+    "the-graph":     {"symbol": "GRT",   "ticker": "GRT-USD",   "name": "The Graph",      "logo": "https://cryptologos.cc/logos/the-graph-grt-logo.png"},
+    "render-token":  {"symbol": "RENDER","ticker": "RENDER-USD","name": "Render",         "logo": "https://cryptologos.cc/logos/render-token-rndr-logo.png"},
+    "helium":        {"symbol": "HNT",   "ticker": "HNT-USD",   "name": "Helium",         "logo": "https://cryptologos.cc/logos/helium-hnt-logo.png"},
+    "arweave":       {"symbol": "AR",    "ticker": "AR-USD",    "name": "Arweave",        "logo": "https://cryptologos.cc/logos/arweave-ar-logo.png"},
+    "theta":         {"symbol": "THETA", "ticker": "THETA-USD", "name": "Theta Network",  "logo": "https://cryptologos.cc/logos/theta-token-theta-logo.png"},
+    "internet-computer": {"symbol": "ICP","ticker": "ICP-USD",  "name": "Internet Computer","logo": "https://cryptologos.cc/logos/internet-computer-icp-logo.png"},
+    # ── Gaming / Metaverse
+    "sandbox":       {"symbol": "SAND",  "ticker": "SAND-USD",  "name": "The Sandbox",    "logo": "https://cryptologos.cc/logos/the-sandbox-sand-logo.png"},
+    "decentraland":  {"symbol": "MANA",  "ticker": "MANA-USD",  "name": "Decentraland",   "logo": "https://cryptologos.cc/logos/decentraland-mana-logo.png"},
+    "axie-infinity": {"symbol": "AXS",   "ticker": "AXS-USD",   "name": "Axie Infinity",  "logo": "https://cryptologos.cc/logos/axie-infinity-axs-logo.png"},
+    "gala":          {"symbol": "GALA",  "ticker": "GALA-USD",  "name": "Gala",           "logo": "https://cryptologos.cc/logos/gala-gala-logo.png"},
+    # ── Privacy / Misc
+    "zcash":         {"symbol": "ZEC",   "ticker": "ZEC-USD",   "name": "Zcash",          "logo": "https://cryptologos.cc/logos/zcash-zec-logo.png"},
+    "dash":          {"symbol": "DASH",  "ticker": "DASH-USD",  "name": "Dash",           "logo": "https://cryptologos.cc/logos/dash-dash-logo.png"},
+    "iota":          {"symbol": "IOTA",  "ticker": "IOTA-USD",  "name": "IOTA",           "logo": "https://cryptologos.cc/logos/iota-iota-logo.png"},
+    "neo":           {"symbol": "NEO",   "ticker": "NEO-USD",   "name": "NEO",            "logo": "https://cryptologos.cc/logos/neo-neo-logo.png"},
+    "waves":         {"symbol": "WAVES", "ticker": "WAVES-USD", "name": "Waves",          "logo": "https://cryptologos.cc/logos/waves-waves-logo.png"},
+    "zilliqa":       {"symbol": "ZIL",   "ticker": "ZIL-USD",   "name": "Zilliqa",        "logo": "https://cryptologos.cc/logos/zilliqa-zil-logo.png"},
+    "qtum":          {"symbol": "QTUM",  "ticker": "QTUM-USD",  "name": "Qtum",           "logo": "https://cryptologos.cc/logos/qtum-qtum-logo.png"},
+    "flow":          {"symbol": "FLOW",  "ticker": "FLOW-USD",  "name": "Flow",           "logo": "https://cryptologos.cc/logos/flow-flow-logo.png"},
 }
-COLORS = {
-    "BTC-USD": "#F7931A",
-    "ETH-USD": "#627EEA",
-    "SOL-USD": "#9945FF"
-}
 
-# ── Cache ─────────────────────────────────────────────────────────────
-_cache = {
-    "df":        None,
-    "timestamp": 0,
-    "lock":      threading.Lock()
-}
-CACHE_TTL = 300  # 5 minutes
+# ── Helpers ────────────────────────────────────────────────────────────────
 
-
-def fetch_data(days=1825):
-    """Fetch historical data with 5-minute in-memory cache."""
-    with _cache["lock"]:
-        now = time.time()
-        if _cache["df"] is not None and (now - _cache["timestamp"]) < CACHE_TTL:
-            return _cache["df"]
-
-        end   = datetime.today()
-        start = end - timedelta(days=days)
-        frames = []
-
-        for ticker, name in COINS.items():
-            try:
-                raw = yf.download(
-                    ticker, start=start, end=end,
-                    progress=False, auto_adjust=True
-                )
-                if raw.empty:
-                    continue
-                df = raw[["Close"]].copy()
-                df.columns = ["price"]
-                df.index.name = "timestamp"
-                df = df.reset_index()
-                df["ticker"] = ticker
-                df["coin"]   = name
-                df["year"]   = df["timestamp"].dt.year
-                df["price"]  = pd.to_numeric(df["price"], errors="coerce")
-                df = df.dropna(subset=["price"])
-                frames.append(df)
-            except Exception as e:
-                print(f"Error fetching {name}: {e}")
-
-        if not frames:
-            return _cache["df"]  # return stale cache if available
-
-        result = pd.concat(frames, ignore_index=True)
-        _cache["df"]        = result
-        _cache["timestamp"] = now
-        return result
+def safe(v):
+    if v is None:
+        return None
+    try:
+        if math.isnan(v) or math.isinf(v):
+            return None
+        return round(float(v), 8)
+    except Exception:
+        return None
 
 
-# ── Helpers ───────────────────────────────────────────────────────────
-def compute_insights(df):
-    insights = []
-    for ticker, name in COINS.items():
-        d = df[df["ticker"] == ticker].sort_values("timestamp")
-        if len(d) < 2:
-            continue
-        prices       = d["price"]
-        start_price  = prices.iloc[0]
-        end_price    = prices.iloc[-1]
-        ath          = prices.max()
-        atl          = prices.min()
-        total_growth = (end_price - start_price) / start_price * 100
-        drawdown     = (ath - end_price) / ath * 100
-        volatility   = prices.pct_change().std() * 100
-
-        yearly     = d.groupby("year")["price"].mean()
-        best_year  = int(yearly.idxmax())
-        worst_year = int(yearly.idxmin())
-        avgs       = yearly.values
-        yoy        = [(avgs[i] - avgs[i-1]) / avgs[i-1] * 100
-                      for i in range(1, len(avgs))]
-
-        if total_growth > 500:
-            verdict = "Exceptional Performer"
-            risk    = "Very High"
-            advice  = "Ideal for aggressive traders. Massive upside but brutal drawdowns."
-        elif total_growth > 100:
-            verdict = "Strong Performer"
-            risk    = "High"
-            advice  = "Good for medium-risk traders. Rewarded long-term holders well."
-        elif total_growth > 0:
-            verdict = "Moderate Performer"
-            risk    = "Medium"
-            advice  = "Safer relative pick. Lower upside, suits conservative traders."
-        else:
-            verdict = "Underperformer"
-            risk    = "High (downside)"
-            advice  = "More loss than gain. Study dip patterns carefully before entering."
-
-        insights.append({
-            "ticker":       ticker,
-            "name":         name,
-            "color":        COLORS[ticker],
-            "start_price":  round(float(start_price), 2),
-            "end_price":    round(float(end_price), 2),
-            "ath":          round(float(ath), 2),
-            "atl":          round(float(atl), 2),
-            "total_growth": round(float(total_growth), 2),
-            "drawdown":     round(float(drawdown), 2),
-            "volatility":   round(float(volatility), 4),
-            "best_year":    best_year,
-            "worst_year":   worst_year,
-            "best_yoy":     round(float(max(yoy)), 2) if yoy else 0,
-            "worst_yoy":    round(float(min(yoy)), 2) if yoy else 0,
-            "verdict":      verdict,
-            "risk":         risk,
-            "advice":       advice,
-        })
-    return insights
+def days_to_period(days):
+    d = int(days)
+    if d <= 30:  return "1mo",  "1d"
+    if d <= 90:  return "3mo",  "1d"
+    if d <= 180: return "6mo",  "1d"
+    if d <= 365: return "1y",   "1d"
+    if d <= 730: return "2y",   "1d"
+    return "5y", "1d"
 
 
-def compute_rsi(prices, period=14):
-    """Compute RSI for a price series."""
-    delta  = prices.diff()
-    gain   = delta.clip(lower=0)
-    loss   = -delta.clip(upper=0)
-    avg_gain = gain.rolling(window=period).mean()
-    avg_loss = loss.rolling(window=period).mean()
-    rs  = avg_gain / avg_loss.replace(0, np.nan)
-    rsi = 100 - (100 / (1 + rs))
-    return float(round(rsi.iloc[-1], 2)) if not rsi.empty else None
+# ── Routes ─────────────────────────────────────────────────────────────────
 
-
-def compute_max_drawdown(prices):
-    """Compute maximum drawdown percentage."""
-    roll_max   = prices.cummax()
-    drawdown   = (prices - roll_max) / roll_max * 100
-    return float(round(drawdown.min(), 2))
-
-
-# ── Existing routes ───────────────────────────────────────────────────
 @app.route("/")
 def index():
-    try:
-        return render_template("index.html")
-    except Exception:
-        return jsonify({"message": "Flask is running. Add templates/index.html for the UI."}), 200
+    return render_template("index.html")
+
+
+@app.route("/api/coins")
+def list_coins():
+    """Return full coin metadata (no prices). Cached 1 hour — list never changes at runtime."""
+    return jsonify(COINS)
 
 
 @app.route("/api/prices")
-def api_prices():
-    try:
-        df = fetch_data()
-        if df is None:
-            return jsonify({"error": "Failed to fetch price data"}), 500
-        result = {}
-        for ticker in COINS:
-            d = df[df["ticker"] == ticker].sort_values("timestamp")
-            result[ticker] = {
-                "dates":  d["timestamp"].dt.strftime("%Y-%m-%d").tolist(),
-                "prices": [round(float(p), 2) for p in d["price"].tolist()],
-                "name":   COINS[ticker],
-                "color":  COLORS[ticker],
-            }
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@cached(ttl_seconds=60)          # refresh every 60 s — matches frontend auto-refresh
+def get_prices():
+    """Batch-download the latest close + 24-h change for all coins."""
+    tickers = [v["ticker"] for v in COINS.values()]
+    data = yf.download(tickers, period="2d", interval="1d",
+                       auto_adjust=True, progress=False)
 
-
-@app.route("/api/yearly")
-def api_yearly():
-    try:
-        df = fetch_data()
-        if df is None:
-            return jsonify({"error": "Failed to fetch yearly data"}), 500
-        result = {}
-        for ticker in COINS:
-            d      = df[df["ticker"] == ticker]
-            yearly = d.groupby("year")["price"].agg(
-                avg="mean", high="max", low="min"
-            ).reset_index()
-            result[ticker] = {
-                "name":  COINS[ticker],
-                "color": COLORS[ticker],
-                "years": yearly["year"].tolist(),
-                "avg":   [round(float(v), 2) for v in yearly["avg"].tolist()],
-                "high":  [round(float(v), 2) for v in yearly["high"].tolist()],
-                "low":   [round(float(v), 2) for v in yearly["low"].tolist()],
-            }
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/insights")
-def api_insights():
-    try:
-        df = fetch_data()
-        if df is None:
-            return jsonify({"error": "Failed to fetch insight data"}), 500
-        return jsonify(compute_insights(df))
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/live")
-def api_live():
-    result = []
-    for ticker, name in COINS.items():
+    result = {}
+    for coin_id, meta in COINS.items():
+        t = meta["ticker"]
         try:
-            t    = yf.Ticker(ticker)
-            info = t.fast_info
-            result.append({
-                "ticker": ticker,
-                "name":   name,
-                "color":  COLORS[ticker],
-                "price":  round(float(info.last_price), 2),
-                "high24": round(float(info.day_high), 2),
-                "low24":  round(float(info.day_low), 2),
-                "change": round(float(
-                    (info.last_price - info.previous_close)
-                    / info.previous_close * 100
-                ), 2),
-            })
+            closes = data["Close"][t].dropna()
+            if len(closes) < 1:
+                continue
+            price = float(closes.iloc[-1])
+            prev  = float(closes.iloc[-2]) if len(closes) >= 2 else price
+            chg   = ((price - prev) / prev * 100) if prev else 0
+
+            # market cap via fast_info (lightweight)
+            try:
+                mc = yf.Ticker(t).fast_info.market_cap
+            except Exception:
+                mc = None
+
+            result[coin_id] = {
+                "id":         coin_id,
+                "name":       meta["name"],
+                "symbol":     meta["symbol"],
+                "logo":       meta["logo"],
+                "price":      safe(price),
+                "change_24h": safe(chg),
+                "market_cap": safe(mc),
+            }
         except Exception as e:
-            result.append({
-                "ticker": ticker,
-                "name":   name,
-                "color":  COLORS[ticker],
-                "error":  str(e)
-            })
+            print(f"[prices] {coin_id}: {e}")
+
     return jsonify(result)
 
 
-# ── New routes ────────────────────────────────────────────────────────
+@app.route("/api/history/<coin_id>")
+def get_history(coin_id):
+    """Full OHLCV history for one coin. Cached 5 minutes."""
+    if coin_id not in COINS:
+        return jsonify({"error": "Coin not found"}), 404
 
-@app.route("/health")
-def health():
-    return jsonify({
-        "status":    "ok",
-        "timestamp": datetime.utcnow().isoformat(),
-        "cache_age": round(time.time() - _cache["timestamp"], 1)
-                     if _cache["timestamp"] else None
+    days     = request.args.get("days", "1825")
+    cache_key = f"history_{coin_id}_{days}"
+    entry     = _cache.get(cache_key)
+    if entry and (time.time() - entry["ts"] < 300):
+        return entry["val"]
+
+    period, interval = days_to_period(days)
+    meta   = COINS[coin_id]
+    df     = yf.Ticker(meta["ticker"]).history(period=period, interval=interval, auto_adjust=True)
+
+    if df.empty:
+        return jsonify({"error": "No data returned from yfinance"}), 500
+
+    dates  = [d.strftime("%Y-%m-%d") for d in df.index]
+    prices = [safe(p) for p in df["Close"].tolist()]
+
+    valid = [p for p in prices if p is not None]
+    ath   = max(valid) if valid else 0
+    atl   = min(valid) if valid else 0
+    fp    = prices[0]  or 0
+    lp    = prices[-1] or 0
+    ret   = round(((lp - fp) / fp * 100), 2) if fp else 0
+
+    payload = jsonify({
+        "coin_id":          coin_id,
+        "name":             meta["name"],
+        "symbol":           meta["symbol"],
+        "logo":             meta["logo"],
+        "dates":            dates,
+        "prices":           prices,
+        "all_time_high":    ath,
+        "all_time_low":     atl,
+        "first_price":      fp,
+        "last_price":       lp,
+        "total_return_pct": ret,
     })
+    _cache[cache_key] = {"val": payload, "ts": time.time()}
+    return payload
 
 
-@app.route("/api/sentiment")
-def api_sentiment():
-    try:
-        df = fetch_data()
-        if df is None:
-            return jsonify({"error": "Failed to fetch data"}), 500
+@app.route("/api/compare")
+def compare_coins():
+    """Normalized performance comparison for up to 6 coins. Cached 5 minutes."""
+    coins_param = request.args.get("coins", "bitcoin,ethereum,solana")
+    days        = request.args.get("days", "365")
+    coin_list   = [c for c in coins_param.split(",") if c in COINS]
 
-        sentiments = []
-        for ticker, name in COINS.items():
-            d      = df[df["ticker"] == ticker].sort_values("timestamp")
-            prices = d["price"]
+    if not coin_list:
+        return jsonify({"error": "No valid coins provided"}), 400
 
-            if len(prices) < 30:
+    cache_key = f"compare_{'_'.join(sorted(coin_list))}_{days}"
+    entry = _cache.get(cache_key)
+    if entry and (time.time() - entry["ts"] < 300):
+        return entry["val"]
+
+    period, interval = days_to_period(days)
+    result = {"coins": {}, "dates": None}
+
+    for coin_id in coin_list:
+        meta = COINS[coin_id]
+        try:
+            df = yf.Ticker(meta["ticker"]).history(period=period, interval=interval, auto_adjust=True)
+            if df.empty:
                 continue
 
-            total_growth = (prices.iloc[-1] - prices.iloc[0]) / prices.iloc[0] * 100
-            volatility   = float(prices.pct_change().std() * 100)
-            ath          = prices.max()
-            drawdown     = float((ath - prices.iloc[-1]) / ath * 100)
+            dates  = [d.strftime("%Y-%m-%d") for d in df.index]
+            prices = [safe(p) for p in df["Close"].tolist()]
+            if result["dates"] is None:
+                result["dates"] = dates
 
-            yearly     = d.groupby("year")["price"].mean()
-            avgs       = yearly.values
-            yoy_list   = [(avgs[i] - avgs[i-1]) / avgs[i-1] * 100
-                          for i in range(1, len(avgs))]
-            recent_yoy = yoy_list[-1] if yoy_list else 0
+            base = prices[0] or 1
+            norm = [round((p / base) * 100, 2) if p is not None else None for p in prices]
+            fp, lp = (prices[0] or 0), (prices[-1] or 0)
 
-            # Score 0–100
-            growth_score     = min(max(total_growth / 10, 0), 40)
-            volatility_score = max(20 - volatility * 2, 0)
-            drawdown_score   = max(20 - drawdown / 2, 0)
-            yoy_score        = min(max(recent_yoy / 5, 0), 20)
-            confidence       = round(growth_score + volatility_score +
-                                     drawdown_score + yoy_score, 1)
-
-            if confidence >= 70:
-                sentiment    = "Bullish"
-                risk_level   = "Medium"
-                explanation  = (f"{name} shows strong growth of {total_growth:.1f}% "
-                                f"with manageable volatility. Positive momentum detected.")
-            elif confidence >= 45:
-                sentiment    = "Neutral"
-                risk_level   = "Medium-High"
-                explanation  = (f"{name} shows mixed signals. Growth is present but "
-                                f"volatility of {volatility:.2f}% suggests caution.")
-            elif confidence >= 25:
-                sentiment    = "Bearish"
-                risk_level   = "High"
-                explanation  = (f"{name} is under pressure with {drawdown:.1f}% drawdown "
-                                f"from peak. Risk-averse traders should wait.")
-            else:
-                sentiment    = "Very Bearish"
-                risk_level   = "Very High"
-                explanation  = (f"{name} is showing severe weakness. High volatility "
-                                f"and large drawdown suggest significant risk.")
-
-            sentiments.append({
-                "ticker":           ticker,
-                "name":             name,
-                "color":            COLORS[ticker],
-                "sentiment":        sentiment,
-                "risk_level":       risk_level,
-                "confidence_score": confidence,
-                "total_growth_pct": round(float(total_growth), 2),
-                "volatility_pct":   round(volatility, 4),
-                "drawdown_pct":     round(drawdown, 2),
-                "recent_yoy_pct":   round(float(recent_yoy), 2),
-                "explanation":      explanation,
-            })
-
-        return jsonify(sentiments)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/risk")
-def api_risk():
-    try:
-        df = fetch_data()
-        if df is None:
-            return jsonify({"error": "Failed to fetch data"}), 500
-
-        result = []
-        for ticker, name in COINS.items():
-            d      = df[df["ticker"] == ticker].sort_values("timestamp")
-            prices = d["price"]
-
-            if len(prices) < 2:
-                continue
-
-            volatility   = float(prices.pct_change().std() * 100)
-            max_dd       = compute_max_drawdown(prices)
-            total_growth = float((prices.iloc[-1] - prices.iloc[0]) / prices.iloc[0] * 100)
-
-            # Risk score 0–100 (higher = riskier)
-            vol_score = min(volatility * 5, 50)
-            dd_score  = min(abs(max_dd) / 2, 40)
-            gr_score  = max(10 - total_growth / 100, 0)
-            risk_score = round(vol_score + dd_score + gr_score, 1)
-
-            if risk_score >= 75:
-                category = "Extreme"
-            elif risk_score >= 55:
-                category = "High"
-            elif risk_score >= 35:
-                category = "Medium"
-            else:
-                category = "Low"
-
-            result.append({
-                "ticker":       ticker,
-                "name":         name,
-                "color":        COLORS[ticker],
-                "volatility":   round(volatility, 4),
-                "max_drawdown": round(max_dd, 2),
-                "risk_score":   risk_score,
-                "risk_category": category,
-            })
-
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/indicators/<ticker>")
-def api_indicators(ticker):
-    try:
-        ticker = ticker.upper()
-        if ticker not in COINS:
-            return jsonify({"error": f"Unknown ticker {ticker}. Use BTC-USD, ETH-USD or SOL-USD"}), 400
-
-        df = fetch_data()
-        if df is None:
-            return jsonify({"error": "Failed to fetch data"}), 500
-
-        d      = df[df["ticker"] == ticker].sort_values("timestamp")
-        prices = d["price"].reset_index(drop=True)
-
-        if len(prices) < 200:
-            return jsonify({"error": "Not enough data for indicators"}), 400
-
-        rsi    = compute_rsi(prices)
-        ma50   = float(round(prices.rolling(50).mean().iloc[-1], 2))
-        ma200  = float(round(prices.rolling(200).mean().iloc[-1], 2))
-        current = float(round(prices.iloc[-1], 2))
-
-        # Signal
-        if current > ma50 > ma200:
-            signal = "Strong Uptrend — price above both MAs"
-        elif current > ma200:
-            signal = "Moderate Uptrend — price above 200-day MA"
-        elif current < ma50 < ma200:
-            signal = "Strong Downtrend — price below both MAs"
-        else:
-            signal = "Mixed — watch for crossover"
-
-        rsi_signal = (
-            "Overbought — consider taking profit" if rsi and rsi > 70
-            else "Oversold — potential buy opportunity" if rsi and rsi < 30
-            else "Neutral RSI"
-        )
-
-        return jsonify({
-            "ticker":       ticker,
-            "name":         COINS[ticker],
-            "current_price": current,
-            "rsi":          rsi,
-            "rsi_signal":   rsi_signal,
-            "ma_50":        ma50,
-            "ma_200":       ma200,
-            "ma_signal":    signal,
-            "above_ma50":   current > ma50,
-            "above_ma200":  current > ma200,
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/portfolio", methods=["POST"])
-def api_portfolio():
-    try:
-        body = request.get_json(force=True)
-        if not body:
-            return jsonify({"error": "Send JSON body e.g. {\"BTC-USD\": 0.5}"}), 400
-
-        # Validate tickers
-        invalid = [t for t in body if t not in COINS]
-        if invalid:
-            return jsonify({"error": f"Unknown tickers: {invalid}"}), 400
-
-        live_prices = {}
-        changes     = {}
-        for ticker in body:
-            try:
-                info = yf.Ticker(ticker).fast_info
-                live_prices[ticker] = float(info.last_price)
-                changes[ticker]     = float(
-                    (info.last_price - info.previous_close)
-                    / info.previous_close * 100
-                )
-            except Exception as e:
-                return jsonify({"error": f"Could not fetch price for {ticker}: {e}"}), 500
-
-        allocation   = {}
-        total_value  = 0.0
-        for ticker, qty in body.items():
-            val = float(qty) * live_prices[ticker]
-            allocation[ticker] = {
-                "name":       COINS[ticker],
-                "quantity":   float(qty),
-                "price":      round(live_prices[ticker], 2),
-                "value":      round(val, 2),
-                "change_pct": round(changes[ticker], 2),
+            result["coins"][coin_id] = {
+                "name":       meta["name"],
+                "symbol":     meta["symbol"],
+                "logo":       meta["logo"],
+                "normalized": norm,
+                "return_pct": round(((lp - fp) / fp * 100), 2) if fp else 0,
             }
-            total_value += val
+        except Exception as e:
+            print(f"[compare] {coin_id}: {e}")
 
-        for ticker in allocation:
-            allocation[ticker]["weight_pct"] = round(
-                allocation[ticker]["value"] / total_value * 100, 2
-            )
-
-        best_asset  = max(allocation, key=lambda t: changes[t])
-        worst_asset = min(allocation, key=lambda t: changes[t])
-
-        weighted_change = sum(
-            changes[t] * allocation[t]["value"] / total_value
-            for t in allocation
-        )
-
-        return jsonify({
-            "total_value":       round(total_value, 2),
-            "portfolio_change_pct": round(weighted_change, 2),
-            "best_asset":        {"ticker": best_asset,  "name": COINS[best_asset],  "change_pct": round(changes[best_asset], 2)},
-            "worst_asset":       {"ticker": worst_asset, "name": COINS[worst_asset], "change_pct": round(changes[worst_asset], 2)},
-            "allocation":        allocation,
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    payload = jsonify(result)
+    _cache[cache_key] = {"val": payload, "ts": time.time()}
+    return payload
 
 
-@app.route("/api/correlation")
-def api_correlation():
-    try:
-        df = fetch_data()
-        if df is None:
-            return jsonify({"error": "Failed to fetch data"}), 500
+@app.route("/api/milestones/<coin_id>")
+def get_milestones(coin_id):
+    """ATH, ATL, best/worst day, yearly returns. Cached 10 minutes."""
+    if coin_id not in COINS:
+        return jsonify({"error": "Coin not found"}), 404
 
-        pivot = df.pivot_table(index="timestamp", columns="ticker", values="price")
-        pivot = pivot.dropna()
+    cache_key = f"milestones_{coin_id}"
+    entry = _cache.get(cache_key)
+    if entry and (time.time() - entry["ts"] < 600):
+        return entry["val"]
 
-        if pivot.empty:
-            return jsonify({"error": "Not enough overlapping data"}), 500
+    meta = COINS[coin_id]
+    df   = yf.Ticker(meta["ticker"]).history(period="5y", interval="1d", auto_adjust=True)
 
-        corr   = pivot.pct_change().dropna().corr().round(4)
-        tickers = list(corr.columns)
+    if df.empty:
+        return jsonify({"error": "No data returned from yfinance"}), 500
 
-        matrix = []
-        for t1 in tickers:
-            row = {}
-            for t2 in tickers:
-                row[t2] = float(corr.loc[t1, t2])
-            matrix.append({"ticker": t1, "name": COINS.get(t1, t1), "correlations": row})
+    entries = [
+        {"date": d.strftime("%Y-%m-%d"), "price": safe(p)}
+        for d, p in zip(df.index, df["Close"])
+        if safe(p) is not None
+    ]
 
-        interpretation = []
-        pairs = [(tickers[i], tickers[j])
-                 for i in range(len(tickers))
-                 for j in range(i+1, len(tickers))]
-        for t1, t2 in pairs:
-            val = float(corr.loc[t1, t2])
-            if val > 0.8:
-                label = "Very High — move almost in lockstep"
-            elif val > 0.6:
-                label = "High — strong co-movement"
-            elif val > 0.4:
-                label = "Moderate — partial co-movement"
-            else:
-                label = "Low — relatively independent"
-            interpretation.append({
-                "pair":  f"{t1} / {t2}",
-                "value": round(val, 4),
-                "label": label
-            })
+    ath = max(entries, key=lambda x: x["price"])
+    atl = min(entries, key=lambda x: x["price"])
 
-        return jsonify({
-            "matrix":         matrix,
-            "interpretation": interpretation
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    changes = []
+    for i in range(1, len(entries)):
+        prev = entries[i - 1]["price"]
+        curr = entries[i]["price"]
+        if prev and prev > 0:
+            pct = (curr - prev) / prev * 100
+            changes.append({"date": entries[i]["date"], "change_pct": round(pct, 2), "price": curr})
+
+    best_day  = max(changes, key=lambda x: x["change_pct"]) if changes else {}
+    worst_day = min(changes, key=lambda x: x["change_pct"]) if changes else {}
+
+    # Yearly returns — use first and last closing price of each calendar year
+    yearly = {}
+    for e in entries:
+        yr = e["date"][:4]
+        if yr not in yearly:
+            yearly[yr] = {"start": e["price"], "end": e["price"]}
+        yearly[yr]["end"] = e["price"]
+
+    yearly_returns = [
+        {
+            "year":        yr,
+            "return_pct":  round(((v["end"] - v["start"]) / v["start"] * 100), 2) if v["start"] else 0,
+            "start_price": v["start"],
+            "end_price":   v["end"],
+        }
+        for yr, v in sorted(yearly.items())
+    ]
+
+    payload = jsonify({
+        "coin_id":        coin_id,
+        "name":           meta["name"],
+        "symbol":         meta["symbol"],
+        "ath":            ath,
+        "atl":            atl,
+        "best_day":       best_day,
+        "worst_day":      worst_day,
+        "yearly_returns": yearly_returns,
+    })
+    _cache[cache_key] = {"val": payload, "ts": time.time()}
+    return payload
 
 
-@app.route("/api/market-summary")
-def api_market_summary():
-    try:
-        df = fetch_data()
-        if df is None:
-            return jsonify({"error": "Failed to fetch data"}), 500
+# ── Cache management endpoints (optional, handy for debugging) ─────────────
 
-        stats = {}
-        for ticker, name in COINS.items():
-            d      = df[df["ticker"] == ticker].sort_values("timestamp")
-            prices = d["price"]
-            if len(prices) < 2:
-                continue
-            stats[ticker] = {
-                "name":         name,
-                "total_growth": float((prices.iloc[-1] - prices.iloc[0]) / prices.iloc[0] * 100),
-                "volatility":   float(prices.pct_change().std() * 100),
-                "current":      float(prices.iloc[-1]),
-            }
+@app.route("/api/cache/clear", methods=["POST"])
+def clear_cache():
+    _cache.clear()
+    return jsonify({"status": "cache cleared"})
 
-        if not stats:
-            return jsonify({"error": "No stats available"}), 500
 
-        best_performer  = max(stats, key=lambda t: stats[t]["total_growth"])
-        worst_performer = min(stats, key=lambda t: stats[t]["total_growth"])
-        most_volatile   = max(stats, key=lambda t: stats[t]["volatility"])
+@app.route("/api/cache/stats")
+def cache_stats():
+    now = time.time()
+    return jsonify({k: round(now - v["ts"], 1) for k, v in _cache.items()})
 
-        avg_growth = sum(s["total_growth"] for s in stats.values()) / len(stats)
-        avg_vol    = sum(s["volatility"]   for s in stats.values()) / len(stats)
 
-        if avg_growth > 100 and avg_vol < 5:
-            condition = "Bull Market — strong growth, controlled risk"
-        elif avg_growth > 50:
-            condition = "Cautious Bull — growth present but volatile"
-        elif avg_growth > 0:
-            condition = "Sideways — low momentum, wait for breakout"
-        else:
-            condition = "Bear Market — negative trend across assets"
-
-        return jsonify({
-            "best_performer": {
-                "ticker":     best_performer,
-                "name":       stats[best_performer]["name"],
-                "growth_pct": round(stats[best_performer]["total_growth"], 2),
-            },
-            "worst_performer": {
-                "ticker":     worst_performer,
-                "name":       stats[worst_performer]["name"],
-                "growth_pct": round(stats[worst_performer]["total_growth"], 2),
-            },
-            "most_volatile": {
-                "ticker":         most_volatile,
-                "name":           stats[most_volatile]["name"],
-                "volatility_pct": round(stats[most_volatile]["volatility"], 4),
-            },
-            "market_condition":  condition,
-            "avg_growth_pct":    round(avg_growth, 2),
-            "avg_volatility_pct": round(avg_vol, 4),
-            "generated_at":      datetime.utcnow().isoformat(),
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+# ── Entry point ────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("=" * 55)
+    print("  CIPHER Backend  —  http://localhost:5000")
+    print(f"  {len(COINS)} coins loaded")
+    print("  Keep this terminal open, then open index.html")
+    print("=" * 55)
+    app.run(debug=True, port=5000)
