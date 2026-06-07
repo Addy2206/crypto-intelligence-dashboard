@@ -1,0 +1,647 @@
+Write the updated index.html with new hero illustration and Inter font
+bash
+
+cat > /mnt/user-data/outputs/cipher/index.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CIPHER — Crypto Made Simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────────── -->
+<nav id="mainNav">
+  <a class="nav-logo" href="#" onclick="navigate('home')">CIPHER</a>
+
+  <div class="nav-links" id="navLinks">
+    <button class="nav-btn active" data-page="home"      onclick="navigate('home')">Home</button>
+    <button class="nav-btn"        data-page="news"      onclick="navigate('news')">News</button>
+    <button class="nav-btn"        data-page="movers"    onclick="navigate('movers')">Top Movers</button>
+    <button class="nav-btn"        data-page="dashboard" onclick="navigate('dashboard')">Live Dashboard</button>
+    <button class="nav-btn"        data-page="why"       onclick="navigate('why')">Why Crypto?</button>
+    <button class="nav-btn"        data-page="learn"     onclick="navigate('learn')">Learn</button>
+    <button class="nav-btn"        data-page="feedback"  onclick="navigate('feedback')">Feedback</button>
+  </div>
+
+  <div class="nav-right">
+    <div class="theme-switch" id="themeSwitch" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <div class="switch-plate">
+        <div class="switch-lever" id="switchLever"></div>
+      </div>
+      <span class="switch-label" id="switchLabel">☀️</span>
+    </div>
+    <div class="status-pill"><span class="status-dot"></span>LIVE</div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile nav drawer -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="mob-btn" data-page="home"      onclick="navigate('home');closeMobileNav()">Home</button>
+  <button class="mob-btn" data-page="news"      onclick="navigate('news');closeMobileNav()">News</button>
+  <button class="mob-btn" data-page="movers"    onclick="navigate('movers');closeMobileNav()">Top Movers</button>
+  <button class="mob-btn" data-page="dashboard" onclick="navigate('dashboard');closeMobileNav()">Live Dashboard</button>
+  <button class="mob-btn" data-page="why"       onclick="navigate('why');closeMobileNav()">Why Crypto?</button>
+  <button class="mob-btn" data-page="learn"     onclick="navigate('learn');closeMobileNav()">Learn</button>
+  <button class="mob-btn" data-page="feedback"  onclick="navigate('feedback');closeMobileNav()">Feedback</button>
+</div>
+
+<!-- ── PAGES ────────────────────────────────────────────────────────────── -->
+<main id="appRoot">
+
+<!-- ══ HOME ══════════════════════════════════════════════════════════════ -->
+<section class="page active" id="page-home">
+  <!-- Legacy compatibility -->
+  <div class="bg-canvas"></div>
+  <div class="grid-overlay"></div>
+
+  <div class="hero">
+    <!-- Left column: copy + mood -->
+    <div class="hero-left">
+      <div class="hero-tag">For Complete Beginners · No Experience Needed</div>
+      <h1 class="hero-title">Crypto Made<br><span class="gold-text">Simple.</span></h1>
+      <p class="hero-sub">Crypto can feel confusing and overwhelming. CIPHER explains what's happening — in plain English, no jargon.</p>
+
+      <div class="mood-section">
+        <p class="mood-label">How are you feeling about crypto today?</p>
+        <div class="mood-btns">
+          <button class="mood-btn" onclick="setMood('curious')">🤔 Curious</button>
+          <button class="mood-btn" onclick="setMood('confused')">😕 Confused</button>
+          <button class="mood-btn" onclick="setMood('excited')">🚀 Excited</button>
+          <button class="mood-btn" onclick="setMood('nervous')">😬 Nervous</button>
+        </div>
+        <div class="mood-response" id="moodResponse"></div>
+      </div>
+    </div>
+
+    <!-- Right column: hero illustration -->
+    <div class="hero-right">
+      <div class="hero-illustration">
+        <svg viewBox="0 0 480 420" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:100%;max-width:480px">
+          <defs>
+            <!-- Node glow -->
+            <radialGradient id="nodeGlowBlue" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#2d6ef7" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#2d6ef7" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="nodeGlowTeal" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#0ecfb3" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#0ecfb3" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="nodeGlowPurple" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Card gradient -->
+            <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1a2d50" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0d1c38" stop-opacity="0.95"/>
+            </linearGradient>
+            <linearGradient id="cardGrad2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1a3050" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0d2040" stop-opacity="0.95"/>
+            </linearGradient>
+            <!-- Progress bar gradient -->
+            <linearGradient id="progressGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#2d6ef7"/>
+              <stop offset="100%" stop-color="#0ecfb3"/>
+            </linearGradient>
+            <!-- Price line gradient -->
+            <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#2d6ef7"/>
+              <stop offset="50%" stop-color="#0ecfb3"/>
+              <stop offset="100%" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+
+          <!-- ── Blockchain network background lines ── -->
+          <!-- Far connection lines (faint) -->
+          <line x1="80" y1="60" x2="240" y2="130" stroke="rgba(45,110,247,0.15)" stroke-width="1" stroke-dasharray="4 6"/>
+          <line x1="240" y1="130" x2="400" y2="70" stroke="rgba(45,110,247,0.12)" stroke-width="1" stroke-dasharray="4 6"/>
+          <line x1="400" y1="70" x2="430" y2="200" stroke="rgba(14,207,179,0.14)" stroke-width="1" stroke-dasharray="4 6"/>
+          <line x1="80" y1="60" x2="50" y2="200" stroke="rgba(139,92,246,0.13)" stroke-width="1" stroke-dasharray="4 6"/>
+          <line x1="50" y1="200" x2="240" y2="130" stroke="rgba(45,110,247,0.1)" stroke-width="1" stroke-dasharray="4 6"/>
+          <line x1="430" y1="200" x2="380" y2="350" stroke="rgba(14,207,179,0.12)" stroke-width="1" stroke-dasharray="4 6"/>
+          <line x1="50" y1="200" x2="100" y2="350" stroke="rgba(139,92,246,0.1)" stroke-width="1" stroke-dasharray="4 6"/>
+          <line x1="100" y1="350" x2="380" y2="350" stroke="rgba(45,110,247,0.08)" stroke-width="1" stroke-dasharray="4 6"/>
+          <line x1="240" y1="130" x2="240" y2="390" stroke="rgba(45,110,247,0.07)" stroke-width="1" stroke-dasharray="4 6"/>
+
+          <!-- ── Background glow spots ── -->
+          <circle cx="240" cy="140" r="90" fill="url(#nodeGlowBlue)"/>
+          <circle cx="410" cy="80" r="60" fill="url(#nodeGlowTeal)"/>
+          <circle cx="70" cy="210" r="55" fill="url(#nodeGlowPurple)"/>
+
+          <!-- ── Main UI card: price chart ── -->
+          <rect x="108" y="140" width="264" height="162" rx="16" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <!-- Card header -->
+          <circle cx="133" cy="165" r="12" fill="rgba(45,110,247,0.2)" stroke="rgba(45,110,247,0.4)" stroke-width="1"/>
+          <text x="133" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#2d6ef7">₿</text>
+          <text x="152" y="162" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="rgba(240,244,255,0.9)">Bitcoin</text>
+          <text x="152" y="174" font-family="Inter,sans-serif" font-size="9" font-weight="500" fill="rgba(138,157,192,0.8)">BTC/USD</text>
+          <!-- Price badge -->
+          <rect x="290" y="154" width="68" height="22" rx="6" fill="rgba(0,200,150,0.12)" stroke="rgba(0,200,150,0.25)" stroke-width="0.5"/>
+          <text x="324" y="169" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#00c896">+4.2%</text>
+          <!-- Price value -->
+          <text x="128" y="200" font-family="Inter,sans-serif" font-size="22" font-weight="800" fill="rgba(240,244,255,0.95)" letter-spacing="-0.5">$67,420</text>
+
+          <!-- Mini sparkline chart -->
+          <polyline
+            points="118,270 140,265 162,272 184,255 206,260 228,244 250,248 272,238 294,242 316,228 338,220 360,212"
+            fill="none"
+            stroke="url(#lineGrad)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <!-- Fill under line -->
+          <path
+            d="M118,270 140,265 162,272 184,255 206,260 228,244 250,248 272,238 294,242 316,228 338,220 360,212 L360,285 L118,285 Z"
+            fill="rgba(45,110,247,0.06)"
+          />
+
+          <!-- ── Floating card: Learn progress ── -->
+          <rect x="24" y="232" width="145" height="80" rx="14" fill="url(#cardGrad2)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <text x="40" y="255" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(138,157,192,0.7)" letter-spacing="0.06em">LEARNING PATH</text>
+          <text x="40" y="272" font-family="Inter,sans-serif" font-size="14" font-weight="800" fill="rgba(240,244,255,0.9)">5 of 7</text>
+          <text x="40" y="284" font-family="Inter,sans-serif" font-size="10" fill="rgba(138,157,192,0.7)">lessons done</text>
+          <!-- Progress bar -->
+          <rect x="40" y="294" width="113" height="5" rx="2.5" fill="rgba(255,255,255,0.08)"/>
+          <rect x="40" y="294" width="81" height="5" rx="2.5" fill="url(#progressGrad)"/>
+
+          <!-- ── Floating card: News tag ── -->
+          <rect x="312" y="232" width="148" height="68" rx="14" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <text x="328" y="253" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(138,157,192,0.7)" letter-spacing="0.06em">LATEST NEWS</text>
+          <text x="328" y="270" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="rgba(240,244,255,0.9)">Fed signals rate</text>
+          <text x="328" y="284" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="rgba(240,244,255,0.9)">cut in Q3 2026</text>
+          <rect x="328" y="290" width="55" height="5" rx="2.5" fill="rgba(45,110,247,0.3)"/>
+
+          <!-- ── Floating badge: Beginner friendly ── -->
+          <rect x="150" y="332" width="180" height="34" rx="17" fill="rgba(45,110,247,0.12)" stroke="rgba(45,110,247,0.3)" stroke-width="1"/>
+          <circle cx="173" cy="349" r="7" fill="rgba(0,200,150,0.25)" stroke="rgba(0,200,150,0.5)" stroke-width="1"/>
+          <text x="173" y="353" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#00c896">✓</text>
+          <text x="187" y="353" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(240,244,255,0.85)">No experience needed</text>
+
+          <!-- ── Network nodes (circles with glows) ── -->
+          <!-- Node 1: top-left -->
+          <circle cx="80" cy="60" r="22" fill="rgba(6,11,20,0.8)" stroke="rgba(139,92,246,0.45)" stroke-width="1.5"/>
+          <circle cx="80" cy="60" r="10" fill="rgba(139,92,246,0.2)"/>
+          <text x="80" y="65" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#8b5cf6">Ξ</text>
+
+          <!-- Node 2: top-right -->
+          <circle cx="400" cy="70" r="20" fill="rgba(6,11,20,0.8)" stroke="rgba(14,207,179,0.45)" stroke-width="1.5"/>
+          <circle cx="400" cy="70" r="9" fill="rgba(14,207,179,0.2)"/>
+          <text x="400" y="75" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#0ecfb3">◎</text>
+
+          <!-- Node 3: left-mid -->
+          <circle cx="50" cy="200" r="18" fill="rgba(6,11,20,0.8)" stroke="rgba(45,110,247,0.4)" stroke-width="1.5"/>
+          <circle cx="50" cy="200" r="8" fill="rgba(45,110,247,0.2)"/>
+          <text x="50" y="205" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#2d6ef7">⬡</text>
+
+          <!-- Node 4: right-mid -->
+          <circle cx="430" cy="200" r="18" fill="rgba(6,11,20,0.8)" stroke="rgba(245,166,35,0.4)" stroke-width="1.5"/>
+          <circle cx="430" cy="200" r="8" fill="rgba(245,166,35,0.15)"/>
+          <text x="430" y="205" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#f5a623">◈</text>
+
+          <!-- Node 5: bottom-left -->
+          <circle cx="100" cy="360" r="16" fill="rgba(6,11,20,0.8)" stroke="rgba(139,92,246,0.35)" stroke-width="1"/>
+          <circle cx="100" cy="360" r="7" fill="rgba(139,92,246,0.15)"/>
+          <text x="100" y="364" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="#8b5cf6">⬡</text>
+
+          <!-- Node 6: bottom-right -->
+          <circle cx="380" cy="360" r="16" fill="rgba(6,11,20,0.8)" stroke="rgba(14,207,179,0.35)" stroke-width="1"/>
+          <circle cx="380" cy="360" r="7" fill="rgba(14,207,179,0.15)"/>
+          <text x="380" y="364" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="#0ecfb3">◎</text>
+
+          <!-- Central hub node -->
+          <circle cx="240" cy="130" r="28" fill="rgba(6,11,20,0.9)" stroke="rgba(45,110,247,0.6)" stroke-width="2"/>
+          <circle cx="240" cy="130" r="14" fill="rgba(45,110,247,0.2)"/>
+          <text x="240" y="136" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="800" fill="#2d6ef7">₿</text>
+
+          <!-- Animated pulse ring on central node (CSS animation) -->
+          <circle cx="240" cy="130" r="36" fill="none" stroke="rgba(45,110,247,0.2)" stroke-width="1.5" stroke-dasharray="4 4">
+            <animateTransform attributeName="transform" type="rotate" from="0 240 130" to="360 240 130" dur="12s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- Small data dots along network lines -->
+          <circle cx="160" cy="95" r="3" fill="rgba(45,110,247,0.6)"/>
+          <circle cx="320" cy="100" r="3" fill="rgba(14,207,179,0.6)"/>
+          <circle cx="215" cy="165" r="2.5" fill="rgba(139,92,246,0.5)"/>
+          <circle cx="415" cy="135" r="2.5" fill="rgba(245,166,35,0.5)"/>
+          <circle cx="65" cy="130" r="2.5" fill="rgba(45,110,247,0.5)"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-cards">
+    <div class="home-card" onclick="navigate('news')">
+      <div class="home-card-icon">📰</div>
+      <h3>What's happening today?</h3>
+      <p>The latest crypto news, explained in simple language. No jargon, no hype.</p>
+      <div class="home-card-cta">Read the news →</div>
+    </div>
+    <div class="home-card" onclick="navigate('movers')">
+      <div class="home-card-icon">📈</div>
+      <h3>Which coins are moving & why?</h3>
+      <p>See today's biggest gainers and losers, with plain-English explanations of why.</p>
+      <div class="home-card-cta">See top movers →</div>
+    </div>
+    <div class="home-card" onclick="navigate('why')">
+      <div class="home-card-icon">🤔</div>
+      <h3>Why do people use crypto?</h3>
+      <p>Understand what crypto actually is, why people use it, and what the risks are.</p>
+      <div class="home-card-cta">Learn the basics →</div>
+    </div>
+  </div>
+
+  <div class="home-disclaimer">
+    ⚠️ CIPHER is an educational platform only. Nothing here is financial advice.
+  </div>
+</section>
+
+<!-- ══ NEWS ══════════════════════════════════════════════════════════════ -->
+<section class="page" id="page-news">
+  <div class="page-header">
+    <div class="page-tag">Latest Updates</div>
+    <h2 class="page-title">What's Happening in Crypto</h2>
+    <p class="page-desc">Today's crypto news, written in plain English so anyone can understand it.</p>
+  </div>
+  <div id="newsContainer">
+    <div class="loading"><div class="spin"></div>Loading news…</div>
+  </div>
+</section>
+
+<!-- ══ MOVERS ═════════════════════════════════════════════════════════════ -->
+<section class="page" id="page-movers">
+  <div class="page-header">
+    <div class="page-tag">Daily Movement</div>
+    <h2 class="page-title">Today's Top Movers</h2>
+    <p class="page-desc">The coins rising and falling the most today — with simple explanations.</p>
+  </div>
+  <div id="moversContainer">
+    <div class="loading"><div class="spin"></div>Loading movers…</div>
+  </div>
+  <div class="view-all-wrap">
+    <button class="btn-outline" onclick="navigate('dashboard')">View All Coins in Live Dashboard →</button>
+  </div>
+</section>
+
+<!-- ══ LIVE DASHBOARD ═════════════════════════════════════════════════════ -->
+<section class="page" id="page-dashboard">
+  <div class="page-header">
+    <div class="page-tag">Real-Time Data</div>
+    <h2 class="page-title">Live Dashboard</h2>
+    <p class="page-desc">Live prices, 5-year history charts, and performance comparisons.</p>
+    <div class="last-updated-bar">
+      Last updated: <span id="lastUpdated">—</span>
+      <button class="refresh-btn" onclick="refreshDashboard()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div class="ticker-bar-wrap">
+    <div class="ticker-inner" id="tickerInner">
+      <span class="tick">BTC <b id="t-btc">—</b> <em id="t-btc-c">—</em></span>
+      <span class="tick">ETH <b id="t-eth">—</b> <em id="t-eth-c">—</em></span>
+      <span class="tick">SOL <b id="t-sol">—</b> <em id="t-sol-c">—</em></span>
+      <span class="tick">BNB <b id="t-bnb">—</b> <em id="t-bnb-c">—</em></span>
+      <span class="tick">XRP <b id="t-xrp">—</b> <em id="t-xrp-c">—</em></span>
+      <span class="tick">ADA <b id="t-ada">—</b> <em id="t-ada-c">—</em></span>
+      <span class="tick">DOGE <b id="t-doge">—</b> <em id="t-doge-c">—</em></span>
+      <span class="tick">AVAX <b id="t-avax">—</b> <em id="t-avax-c">—</em></span>
+      <span class="tick">BTC <b id="t-btc2">—</b> <em id="t-btc-c2">—</em></span>
+      <span class="tick">ETH <b id="t-eth2">—</b> <em id="t-eth-c2">—</em></span>
+      <span class="tick">SOL <b id="t-sol2">—</b> <em id="t-sol-c2">—</em></span>
+      <span class="tick">BNB <b id="t-bnb2">—</b> <em id="t-bnb-c2">—</em></span>
+      <span class="tick">XRP <b id="t-xrp2">—</b> <em id="t-xrp-c2">—</em></span>
+      <span class="tick">ADA <b id="t-ada2">—</b> <em id="t-ada-c2">—</em></span>
+      <span class="tick">DOGE <b id="t-doge2">—</b> <em id="t-doge-c2">—</em></span>
+      <span class="tick">AVAX <b id="t-avax2">—</b> <em id="t-avax-c2">—</em></span>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:8px">Live Prices — Click a coin to see its history</div>
+  <div class="coin-grid" id="coinGrid">
+    <div class="loading"><div class="spin"></div>Fetching live prices…</div>
+  </div>
+
+  <div class="section-label" id="historyLabel" style="margin-top:32px">5-Year Price History</div>
+  <div class="coin-selector" id="coinSelector"></div>
+  <div class="chart-panel" id="historyPanel">
+    <div class="loading"><div class="spin"></div>Loading chart…</div>
+  </div>
+
+  <div class="section-label" style="margin-top:32px">Performance Comparison <span style="opacity:.5;font-size:10px;font-weight:400">(normalized to 100 at start)</span></div>
+  <div class="compare-controls" id="compareControls"></div>
+  <div class="cmp-chart-panel">
+    <div class="cmp-legend" id="cmpLegend"></div>
+    <div class="chart-container"><canvas id="cmpChart"></canvas></div>
+  </div>
+
+  <div class="section-label" style="margin-top:32px">Key Milestones</div>
+  <div class="coin-selector" id="msCoinSelector"></div>
+  <div id="milestonesPanel">
+    <div class="loading"><div class="spin"></div>Loading milestones…</div>
+  </div>
+</section>
+
+<!-- ══ WHY CRYPTO ═════════════════════════════════════════════════════════ -->
+<section class="page" id="page-why">
+  <div class="page-header">
+    <div class="page-tag">For Beginners</div>
+    <h2 class="page-title">Why Do People Use Crypto?</h2>
+    <p class="page-desc">A clear, honest explanation for anyone who's ever wondered what crypto actually is.</p>
+  </div>
+
+  <div class="explainer-block">
+    <h3>💡 What is Cryptocurrency?</h3>
+    <p>Cryptocurrency is digital money that exists only on the internet. Unlike the euro or dollar — which are controlled by governments and banks — crypto is managed by a global network of computers following shared rules.</p>
+    <p>Think of it like email vs. postal mail. Email didn't replace mail instantly — it took time, it had new problems, but it solved things mail couldn't. Crypto is doing something similar to money.</p>
+  </div>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-icon">🌍</div>
+      <h4>Global Transfers</h4>
+      <p>Sending money internationally can take days and cost high fees. Crypto can move value across borders in minutes, for a fraction of the cost.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🏦</div>
+      <h4>No Bank Required</h4>
+      <p>1.4 billion adults worldwide have no access to a bank. Crypto gives anyone with a phone access to financial services.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">📊</div>
+      <h4>Investment Potential</h4>
+      <p>Some people buy crypto hoping its value increases over time — similar to buying shares. This comes with significant risk of loss.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🛡️</div>
+      <h4>Inflation Hedge</h4>
+      <p>Bitcoin has a fixed supply of 21 million coins. Some use it to protect savings from inflation, since governments can't "print more."</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">⚡</div>
+      <h4>Programmable Money</h4>
+      <p>Ethereum lets developers build financial apps — loans, insurance, savings — that run automatically without a bank or company controlling them.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-icon">🎮</div>
+      <h4>Digital Ownership</h4>
+      <p>Crypto enables true ownership of digital items — art, game items, music rights — that can't be deleted or taken away by any company.</p>
+    </div>
+  </div>
+
+  <div class="risk-section">
+    <h3>⚠️ The Honest Risks</h3>
+    <div class="risk-grid">
+      <div class="risk-card bad">
+        <h4>🎢 Extreme Volatility</h4>
+        <p>Bitcoin has dropped 80% from its peak. Twice. It has also risen 10,000%+. If you invest, be prepared for wild swings in both directions.</p>
+      </div>
+      <div class="risk-card bad">
+        <h4>🔓 No Safety Net</h4>
+        <p>If you lose your password ("seed phrase"), your crypto is gone forever. There's no "forgot password" button and no bank to call.</p>
+      </div>
+      <div class="risk-card bad">
+        <h4>🎣 Scams Are Common</h4>
+        <p>The crypto space is full of scams — fake projects, pump-and-dump schemes, and phishing attempts. If it sounds too good to be true, it is.</p>
+      </div>
+      <div class="risk-card bad">
+        <h4>📜 Regulation Risk</h4>
+        <p>Governments worldwide are still creating rules around crypto. New regulations could affect the value of your holdings.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="myth-section">
+    <h3>🧹 Common Myths, Busted</h3>
+    <div class="myth-list">
+      <div class="myth-item">
+        <div class="myth-q">❌ "Crypto is only used for crime"</div>
+        <div class="myth-a">✅ Less than 1% of crypto transactions are linked to illegal activity. Cash is used far more for crime.</div>
+      </div>
+      <div class="myth-item">
+        <div class="myth-q">❌ "Bitcoin is anonymous"</div>
+        <div class="myth-a">✅ Bitcoin transactions are public and permanent on the blockchain. It's actually easier to trace than cash.</div>
+      </div>
+      <div class="myth-item">
+        <div class="myth-q">❌ "It's too late to get into crypto"</div>
+        <div class="myth-a">✅ People have said this since Bitcoin was $1, $100, $1,000, and $10,000. Nobody knows the future.</div>
+      </div>
+      <div class="myth-item">
+        <div class="myth-q">❌ "All crypto is the same"</div>
+        <div class="myth-a">✅ There are thousands of coins with very different purposes — from digital gold (Bitcoin) to programmable platforms (Ethereum) to meme coins with no utility.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LEARN ══════════════════════════════════════════════════════════════ -->
+<section class="page" id="page-learn">
+  <div class="page-header">
+    <div class="page-tag">Learning Path</div>
+    <h2 class="page-title">Learn Crypto Step by Step</h2>
+    <p class="page-desc">Start from zero. Each lesson builds on the last. No experience needed.</p>
+  </div>
+
+  <div class="learn-progress-bar">
+    <div class="learn-progress-fill" id="learnProgressFill"></div>
+  </div>
+  <div class="learn-progress-text" id="learnProgressText">0 of 7 lessons completed</div>
+
+  <div class="learn-path">
+    <div class="learn-step" data-step="0">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-header" onclick="toggleLesson(0)">
+          <h4>💰 What is Money?</h4>
+          <span class="step-toggle">+</span>
+        </div>
+        <div class="step-body">
+          <p>Before understanding crypto, you need to understand money itself.</p>
+          <p>Money is anything that a community agrees has value and can be used to trade. Historically, people used shells, gold, and salt. Today we use government-issued paper (called "fiat" currency).</p>
+          <p>The key thing about modern money: <strong>it only has value because we all agree it does.</strong> A €50 note is just a piece of paper. Its value comes from trust in the institution (government/central bank) that issues it.</p>
+          <div class="lesson-takeaway">🎯 Key insight: Money is trust. Crypto replaces institutional trust with mathematical trust.</div>
+          <button class="complete-btn" onclick="completeLesson(0)">Mark Complete ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="learn-step" data-step="1">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-header" onclick="toggleLesson(1)">
+          <h4>₿ What is Bitcoin?</h4>
+          <span class="step-toggle">+</span>
+        </div>
+        <div class="step-body">
+          <p>Bitcoin was created in 2009 by a person (or group) using the name Satoshi Nakamoto. Nobody knows who they really are.</p>
+          <p>Bitcoin is digital money designed to work without any bank, government, or company in control. Transactions are verified by a global network of computers — not a central authority.</p>
+          <p><strong>Key properties of Bitcoin:</strong></p>
+          <ul>
+            <li>Only 21 million will ever exist (scarcity by design)</li>
+            <li>Anyone can send or receive it without permission</li>
+            <li>No single person or government controls it</li>
+            <li>Transactions are public but identities are pseudonymous</li>
+          </ul>
+          <div class="lesson-takeaway">🎯 Key insight: Bitcoin is digital gold — scarce, decentralised, and not controlled by anyone.</div>
+          <button class="complete-btn" onclick="completeLesson(1)">Mark Complete ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="learn-step" data-step="2">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-header" onclick="toggleLesson(2)">
+          <h4>⛓️ What is a Blockchain?</h4>
+          <span class="step-toggle">+</span>
+        </div>
+        <div class="step-body">
+          <p>A blockchain is the technology that makes crypto work. Think of it as a shared spreadsheet that thousands of computers each hold a copy of.</p>
+          <p>Every time someone sends crypto, that transaction is added to a "block." That block is then added to the "chain" of all previous transactions — permanently and publicly.</p>
+          <p><strong>Why this matters:</strong> Because thousands of computers all have identical copies, you can't cheat. You can't secretly edit your own copy — the others would immediately reject it.</p>
+          <div class="lesson-takeaway">🎯 Key insight: A blockchain is a shared record book that no one can tamper with — transparency enforced by maths.</div>
+          <button class="complete-btn" onclick="completeLesson(2)">Mark Complete ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="learn-step" data-step="3">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-header" onclick="toggleLesson(3)">
+          <h4>👛 What is a Crypto Wallet?</h4>
+          <span class="step-toggle">+</span>
+        </div>
+        <div class="step-body">
+          <p>A crypto wallet doesn't store your coins like a physical wallet stores cash. Your coins live on the blockchain. Your wallet stores the <strong>key</strong> that proves you own them.</p>
+          <p>Think of it like a mailbox: your wallet address is the mailbox number (public — anyone can send to it). Your private key is the key to open it (secret — never share this).</p>
+          <p><strong>Types of wallets:</strong></p>
+          <ul>
+            <li><strong>Exchange wallets</strong> — easy but the exchange controls your key (like a bank)</li>
+            <li><strong>Software wallets</strong> — apps on your phone, more control but internet-connected</li>
+            <li><strong>Hardware wallets</strong> — physical USB devices, most secure for large amounts</li>
+          </ul>
+          <div class="lesson-takeaway">🎯 Key insight: "Not your keys, not your coins." Anyone who holds your private key owns your crypto.</div>
+          <button class="complete-btn" onclick="completeLesson(3)">Mark Complete ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="learn-step" data-step="4">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-header" onclick="toggleLesson(4)">
+          <h4>🏪 What are Exchanges?</h4>
+          <span class="step-toggle">+</span>
+        </div>
+        <div class="step-body">
+          <p>A crypto exchange is a marketplace where you can buy, sell, and trade cryptocurrencies — usually for regular money (euros, dollars).</p>
+          <p><strong>Centralised exchanges (CEX)</strong> like Coinbase, Binance, and Kraken work like traditional stockbrokers. They're easy to use but hold your keys for you.</p>
+          <p><strong>Decentralised exchanges (DEX)</strong> like Uniswap run on blockchain code with no company behind them. You always keep your keys, but they're harder to use.</p>
+          <p>For beginners: starting with a reputable CEX is sensible. As you learn more, consider moving coins to your own wallet for long-term holding.</p>
+          <div class="lesson-takeaway">🎯 Key insight: Exchanges are doors into crypto. Once inside, consider moving to your own wallet for security.</div>
+          <button class="complete-btn" onclick="completeLesson(4)">Mark Complete ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="learn-step" data-step="5">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="step-header" onclick="toggleLesson(5)">
+          <h4>⚖️ Benefits &amp; Risks</h4>
+          <span class="step-toggle">+</span>
+        </div>
+        <div class="step-body">
+          <p><strong>Genuine benefits:</strong> Financial access for the unbanked, fast international transfers, programmable money, censorship resistance, and potential for significant returns.</p>
+          <p><strong>Real risks:</strong> Extreme price volatility, irreversible transactions (no chargebacks), complex technology prone to user error, regulatory uncertainty, and prevalence of scams.</p>
+          <p><strong>The honest truth:</strong> Crypto is genuinely useful technology that is also heavily speculated on. The technology will likely survive. Individual coins may not. Never invest more than you can afford to lose completely.</p>
+          <div class="lesson-takeaway">🎯 Key insight: Treat any crypto investment as high-risk. Diversify. Only use money you don't need.</div>
+          <button class="complete-btn" onclick="completeLesson(5)">Mark Complete ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="learn-step" data-step="6">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="step-header" onclick="toggleLesson(6)">
+          <h4>🚫 Common Mistakes to Avoid</h4>
+          <span class="step-toggle">+</span>
+        </div>
+        <div class="step-body">
+          <ul class="mistake-list">
+            <li><strong>FOMO buying</strong> — buying at all-time highs because everyone else is. This is how most people lose money.</li>
+            <li><strong>Ignoring security</strong> — reusing passwords, skipping 2FA, sharing seed phrases. This has cost people millions.</li>
+            <li><strong>Trusting influencers</strong> — many crypto influencers are paid to promote specific coins. DYOR.</li>
+            <li><strong>Not keeping records</strong> — in most countries, crypto gains are taxable. Keep records of every transaction.</li>
+            <li><strong>Chasing cheap coins</strong> — a coin at $0.001 is not "cheap." Price per coin means nothing without market cap context.</li>
+            <li><strong>Panic selling</strong> — crypto has crashed and recovered multiple times. Selling the bottom locks in a loss.</li>
+            <li><strong>Putting in too much</strong> — your first rule: never invest money you need for rent, food, or emergencies.</li>
+          </ul>
+          <div class="lesson-takeaway">🎯 Key insight: The most successful crypto investors are boring — they buy slowly, hold patiently, and secure carefully.</div>
+          <button class="complete-btn" onclick="completeLesson(6)">Mark Complete ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="learn-complete-msg" id="learnCompleteMsg">
+    🎓 You've completed the CIPHER learning path! Remember: this is education, not financial advice. Always do your own research.
+  </div>
+</section>
+
+<!-- ══ FEEDBACK ═══════════════════════════════════════════════════════════ -->
+<section class="page" id="page-feedback">
+  <div class="page-header">
+    <div class="page-tag">Your Voice Matters</div>
+    <h2 class="page-title">Share Your Feedback</h2>
+    <p class="page-desc">Help us make CIPHER better for beginners everywhere. Takes 2 minutes.</p>
+  </div>
+  <div class="feedback-wrap">
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLSc8JPRx0_56VhRz70ac_6oCfIcKnR49xpc5_gFmHzsplp12sQ/viewform?usp=publish-editor"
+      id="feedbackFrame"
+      width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0">
+      Loading Google Form…
+    </iframe>
+    <div class="feedback-fallback" id="feedbackFallback">
+      <div class="feedback-icon">💬</div>
+      <h3>We'd love your feedback!</h3>
+      <p>To add your Google Form, replace the iframe <code>src</code> with your form's embed URL.</p>
+      <p>In the meantime, you can reach us via the options below:</p>
+      <div class="feedback-links">
+        <a href="mailto:feedback@cipher.crypto" class="btn-primary">✉️ Send Email</a>
+        <a href="https://github.com" target="_blank" class="btn-outline">⭐ GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-logo">CIPHER</div>
+  <div class="footer-links">
+    <a href="#" onclick="navigate('why')">Why Crypto?</a>
+    <a href="#" onclick="navigate('learn')">Learn</a>
+    <a href="#" onclick="navigate('feedback')">Feedback</a>
+  </div>
+  <div class="footer-note">DATA VIA YFINANCE · NOT FINANCIAL ADVICE · EDUCATIONAL USE ONLY</div>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
+HTMLEOF
