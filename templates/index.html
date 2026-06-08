@@ -1,630 +1,1082 @@
-Write the updated index.html with new hero illustration and Inter font
-bash
-
-cat > /mnt/user-data/outputs/cipher/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CIPHER — Crypto Made Simple</title>
+<title>CIPHER — Crypto Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<link rel="stylesheet" href="/static/style.css"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg0:#080b10;
+  --bg1:#0d1117;
+  --bg2:#131920;
+  --bg3:#1a2230;
+  --bg4:#212d3d;
+  --line:#ffffff14;
+  --line2:#ffffff22;
+  --t1:#f0f4ff;
+  --t2:#8a9ab8;
+  --t3:#4d5f7a;
+  --accent:#3b82f6;
+  --accent2:#06d6a0;
+  --accent3:#f59e0b;
+  --red:#ef4444;
+  --green:#22c55e;
+  --font-display:'Syne',sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --nav-h:56px;
+  --radius:6px;
+  --radius-lg:12px;
+}
+[data-theme="light"]{
+  --bg0:#f5f6f8;
+  --bg1:#ffffff;
+  --bg2:#f0f2f5;
+  --bg3:#e4e8ef;
+  --bg4:#d8dde8;
+  --line:#00000010;
+  --line2:#00000018;
+  --t1:#0d1117;
+  --t2:#3d4d66;
+  --t3:#8a9ab8;
+}
+
+html,body{
+  font-family:var(--font-display);
+  background:var(--bg0);
+  color:var(--t1);
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  height:var(--nav-h);
+  background:var(--bg0);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;
+  padding:0 28px;gap:0;
+  z-index:100;
+  backdrop-filter:blur(12px);
+}
+.nav-logo{
+  font-size:15px;font-weight:800;letter-spacing:.15em;
+  color:var(--t1);text-decoration:none;
+  margin-right:40px;
+  text-transform:uppercase;
+  flex-shrink:0;
+}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:2px;flex:1}
+.nav-btn{
+  background:none;border:none;cursor:pointer;
+  font-family:var(--font-display);
+  font-size:12px;font-weight:500;letter-spacing:.08em;
+  color:var(--t3);
+  padding:6px 14px;border-radius:var(--radius);
+  text-transform:uppercase;
+  transition:color .15s,background .15s;
+}
+.nav-btn:hover{color:var(--t1);background:var(--bg2)}
+.nav-btn.active{color:var(--t1);background:var(--bg2)}
+.nav-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.live-badge{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);
+  font-size:10px;color:var(--t3);
+  letter-spacing:.06em;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.theme-btn{
+  width:32px;height:32px;border-radius:var(--radius);
+  background:var(--bg2);border:1px solid var(--line2);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--t2);font-size:14px;transition:all .15s;
+}
+.theme-btn:hover{background:var(--bg3);color:var(--t1)}
+.hamburger{
+  display:none;flex-direction:column;gap:4px;
+  background:none;border:none;cursor:pointer;padding:4px;
+}
+.hamburger span{display:block;width:20px;height:1.5px;background:var(--t2)}
+
+/* ── MOBILE NAV ── */
+.mobile-drawer{
+  display:none;position:fixed;top:var(--nav-h);left:0;right:0;
+  background:var(--bg1);border-bottom:1px solid var(--line);
+  padding:12px 16px;flex-direction:column;gap:2px;z-index:99;
+}
+.mobile-drawer.open{display:flex}
+.mob-btn{
+  background:none;border:none;cursor:pointer;
+  font-family:var(--font-display);font-size:13px;font-weight:500;
+  color:var(--t2);padding:10px 12px;border-radius:var(--radius);
+  text-align:left;text-transform:uppercase;letter-spacing:.06em;
+  transition:all .15s;
+}
+.mob-btn:hover,.mob-btn.active{color:var(--t1);background:var(--bg2)}
+
+/* ── PAGES ── */
+main{padding-top:var(--nav-h)}
+.page{display:none;min-height:calc(100vh - var(--nav-h))}
+.page.active{display:block}
+
+/* ── PAGE HEADER ── */
+.page-header{
+  padding:48px 28px 32px;
+  border-bottom:1px solid var(--line);
+  max-width:1200px;margin:0 auto;
+}
+.page-tag{
+  font-family:var(--font-mono);
+  font-size:10px;color:var(--accent);letter-spacing:.15em;
+  text-transform:uppercase;margin-bottom:12px;
+}
+.page-title{font-size:28px;font-weight:700;color:var(--t1);letter-spacing:-.02em}
+.page-desc{font-size:14px;color:var(--t2);margin-top:6px;max-width:540px}
+.page-body{max-width:1200px;margin:0 auto;padding:28px}
+
+/* ── HOME ── */
+#page-home{overflow:hidden}
+.hero-wrap{
+  max-width:1200px;margin:0 auto;
+  padding:64px 28px 48px;
+  display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;
+}
+@media(max-width:860px){.hero-wrap{grid-template-columns:1fr;gap:32px}}
+.hero-eyebrow{
+  font-family:var(--font-mono);
+  font-size:10px;color:var(--accent);
+  letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:20px;
+}
+.hero-h1{
+  font-size:clamp(36px,5vw,60px);
+  font-weight:800;line-height:1.05;
+  letter-spacing:-.03em;color:var(--t1);
+  margin-bottom:20px;
+}
+.hero-h1 em{font-style:normal;color:var(--accent)}
+.hero-sub{font-size:15px;color:var(--t2);line-height:1.7;max-width:420px;margin-bottom:32px}
+.hero-cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{
+  font-family:var(--font-display);font-size:12px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  background:var(--accent);color:#fff;
+  border:none;border-radius:var(--radius);padding:11px 24px;
+  cursor:pointer;transition:all .2s;
+  text-decoration:none;display:inline-block;
+}
+.btn-primary:hover{background:#2563eb;transform:translateY(-1px)}
+.btn-outline{
+  font-family:var(--font-display);font-size:12px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  background:none;color:var(--t1);
+  border:1px solid var(--line2);border-radius:var(--radius);padding:10px 24px;
+  cursor:pointer;transition:all .2s;
+  text-decoration:none;display:inline-block;
+}
+.btn-outline:hover{background:var(--bg2);border-color:var(--line);color:var(--t1)}
+.hero-mood{margin-top:40px}
+.mood-label{font-size:12px;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;font-family:var(--font-mono)}
+.mood-row{display:flex;gap:8px;flex-wrap:wrap}
+.mood-btn{
+  background:var(--bg2);border:1px solid var(--line2);
+  border-radius:var(--radius);padding:7px 16px;
+  font-family:var(--font-display);font-size:12px;font-weight:500;
+  color:var(--t2);cursor:pointer;transition:all .15s;
+}
+.mood-btn:hover,.mood-btn.active{background:var(--bg3);border-color:var(--accent);color:var(--t1)}
+.mood-resp{
+  margin-top:12px;font-size:13px;color:var(--t2);
+  font-family:var(--font-mono);line-height:1.6;
+  min-height:20px;
+}
+/* Hero right: live stats panel */
+.hero-stats{
+  background:var(--bg1);
+  border:1px solid var(--line2);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+}
+.hero-stats-head{
+  padding:14px 20px;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.hero-stats-head span{font-family:var(--font-mono);font-size:10px;color:var(--t3);letter-spacing:.1em}
+.hero-coin-row{
+  display:flex;align-items:center;
+  padding:12px 20px;
+  border-bottom:1px solid var(--line);
+  gap:12px;cursor:pointer;transition:background .15s;
+}
+.hero-coin-row:last-child{border-bottom:none}
+.hero-coin-row:hover{background:var(--bg2)}
+.coin-sym{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--t1);width:40px}
+.coin-name{font-size:11px;color:var(--t3);flex:1}
+.coin-price{font-family:var(--font-mono);font-size:12px;color:var(--t1);margin-left:auto}
+.coin-chg{font-family:var(--font-mono);font-size:11px;min-width:56px;text-align:right}
+.chg-up{color:var(--green)}
+.chg-dn{color:var(--red)}
+/* Sparkline */
+.spark{width:64px;height:28px;flex-shrink:0}
+
+/* Home cards */
+.home-cards{
+  max-width:1200px;margin:0 auto;
+  padding:0 28px 28px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:16px;
+}
+.home-card{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:24px;cursor:pointer;
+  transition:all .2s;
+}
+.home-card:hover{background:var(--bg2);border-color:var(--line);transform:translateY(-2px)}
+.home-card-num{
+  font-family:var(--font-mono);font-size:10px;color:var(--t3);
+  letter-spacing:.12em;margin-bottom:12px;
+}
+.home-card h3{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:8px;letter-spacing:-.01em}
+.home-card p{font-size:13px;color:var(--t2);line-height:1.6}
+.home-card-arrow{font-size:11px;color:var(--accent);margin-top:16px;letter-spacing:.06em;font-family:var(--font-mono)}
+.disclaimer{
+  max-width:1200px;margin:0 auto;
+  padding:16px 28px 40px;
+  font-family:var(--font-mono);font-size:10px;
+  color:var(--t3);letter-spacing:.06em;
+  border-top:1px solid var(--line);margin-top:0;
+}
+
+/* ── LOADING ── */
+.loading-wrap{
+  display:flex;align-items:center;gap:12px;
+  padding:40px 0;color:var(--t3);
+  font-family:var(--font-mono);font-size:12px;
+}
+.spin{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid var(--bg4);border-top-color:var(--accent);
+  animation:spin .7s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TICKER ── */
+.ticker-wrap{
+  border-bottom:1px solid var(--line);
+  overflow:hidden;position:relative;
+  background:var(--bg1);
+}
+.ticker-inner{
+  display:flex;gap:0;
+  animation:ticker 40s linear infinite;
+  width:max-content;
+}
+.ticker-inner:hover{animation-play-state:paused}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick{
+  padding:8px 28px;border-right:1px solid var(--line);
+  font-family:var(--font-mono);font-size:11px;
+  color:var(--t2);white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.tick b{color:var(--t1);font-weight:400}
+.tick em{font-style:normal}
+
+/* ── COIN GRID (dashboard) ── */
+.section-label{
+  font-family:var(--font-mono);font-size:10px;
+  color:var(--t3);letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:16px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
+}
+.coin-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:12px;margin-bottom:40px;
+}
+.coin-card{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:16px;
+  cursor:pointer;transition:all .18s;position:relative;overflow:hidden;
+}
+.coin-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--card-color,var(--accent));opacity:0;transition:opacity .18s;
+}
+.coin-card:hover{background:var(--bg2);transform:translateY(-1px)}
+.coin-card:hover::before{opacity:1}
+.coin-card.selected{border-color:var(--accent);background:var(--bg2)}
+.coin-card.selected::before{opacity:1}
+.cc-top{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.cc-logo{width:24px;height:24px;border-radius:50%;object-fit:contain;background:var(--bg3);flex-shrink:0}
+.cc-sym{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--t1)}
+.cc-name{font-size:10px;color:var(--t3);margin-top:1px}
+.cc-price{font-family:var(--font-mono);font-size:14px;color:var(--t1);margin-bottom:4px}
+.cc-chg{font-family:var(--font-mono);font-size:11px}
+.cc-mc{font-family:var(--font-mono);font-size:10px;color:var(--t3);margin-top:8px}
+
+/* ── CHART PANEL ── */
+.chart-wrap{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:20px;margin-bottom:32px;
+}
+.chart-head{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:20px;gap:16px;flex-wrap:wrap;
+}
+.chart-coin-info{display:flex;align-items:center;gap:12px}
+.chart-logo{width:32px;height:32px;border-radius:50%;object-fit:contain;background:var(--bg3)}
+.chart-name{font-size:16px;font-weight:600;color:var(--t1)}
+.chart-sym{font-family:var(--font-mono);font-size:11px;color:var(--t3)}
+.chart-price{font-family:var(--font-mono);font-size:22px;color:var(--t1);font-weight:300}
+.chart-return-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.badge{
+  font-family:var(--font-mono);font-size:10px;
+  padding:3px 8px;border-radius:4px;
+}
+.badge-up{background:rgba(34,197,94,.12);color:var(--green)}
+.badge-dn{background:rgba(239,68,68,.12);color:var(--red)}
+.badge-neu{background:var(--bg3);color:var(--t3)}
+.period-btns{display:flex;gap:4px}
+.period-btn{
+  font-family:var(--font-mono);font-size:10px;font-weight:500;
+  letter-spacing:.08em;background:none;border:1px solid var(--line2);
+  border-radius:4px;padding:5px 10px;color:var(--t3);cursor:pointer;
+  transition:all .12s;
+}
+.period-btn:hover,.period-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ── COMPARE ── */
+.compare-select-wrap{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:20px;margin-bottom:32px;
+}
+.compare-checkboxes{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;
+}
+.cmp-check-label{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 10px;border-radius:var(--radius);
+  border:1px solid var(--line2);cursor:pointer;
+  font-family:var(--font-mono);font-size:10px;color:var(--t2);
+  transition:all .12s;
+}
+.cmp-check-label:hover{border-color:var(--line);color:var(--t1)}
+.cmp-check-label input{display:none}
+.cmp-check-label.checked{background:var(--bg3);border-color:var(--accent);color:var(--t1)}
+.cmp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── MILESTONES ── */
+.milestones-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;margin-bottom:32px;
+}
+.ms-card{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:16px;
+}
+.ms-card-label{font-family:var(--font-mono);font-size:9px;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.ms-card-val{font-family:var(--font-mono);font-size:18px;color:var(--t1)}
+.ms-card-date{font-family:var(--font-mono);font-size:10px;color:var(--t3);margin-top:4px}
+.yearly-table{width:100%;border-collapse:collapse}
+.yearly-table th{
+  font-family:var(--font-mono);font-size:9px;color:var(--t3);
+  letter-spacing:.12em;text-transform:uppercase;
+  text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);
+}
+.yearly-table td{
+  font-family:var(--font-mono);font-size:12px;color:var(--t2);
+  padding:8px 12px;border-bottom:1px solid var(--line);
+}
+.yearly-table tr:last-child td{border-bottom:none}
+.yearly-table tr:hover td{background:var(--bg2);color:var(--t1)}
+.bar-cell{display:flex;align-items:center;gap:8px}
+.bar-fill{height:4px;border-radius:2px;flex-shrink:0}
+
+/* ── NEWS ── */
+.news-grid{display:flex;flex-direction:column;gap:1px;background:var(--line)}
+.news-item{
+  background:var(--bg1);
+  padding:20px 24px;
+  display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;
+  transition:background .15s;cursor:pointer;
+}
+.news-item:hover{background:var(--bg2)}
+.news-item:first-child{border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.news-item:last-child{border-radius:0 0 var(--radius-lg) var(--radius-lg)}
+.news-source{font-family:var(--font-mono);font-size:9px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.news-title{font-size:14px;font-weight:600;color:var(--t1);line-height:1.4;margin-bottom:6px;letter-spacing:-.01em}
+.news-summary{font-size:12px;color:var(--t2);line-height:1.6}
+.news-date{font-family:var(--font-mono);font-size:10px;color:var(--t3);white-space:nowrap}
+
+/* ── MOVERS ── */
+.movers-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px}
+@media(max-width:700px){.movers-wrap{grid-template-columns:1fr}}
+.movers-col-label{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line);
+}
+.movers-col-label.up{color:var(--green)}
+.movers-col-label.dn{color:var(--red)}
+.mover-row{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:14px 16px;
+  margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;
+}
+.mover-logo{width:28px;height:28px;border-radius:50%;object-fit:contain;background:var(--bg3);flex-shrink:0}
+.mover-info{flex:1}
+.mover-sym{font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--t1)}
+.mover-expl{font-size:11px;color:var(--t2);margin-top:2px;line-height:1.4}
+.mover-chg{font-family:var(--font-mono);font-size:15px;font-weight:500}
+
+/* ── WHY / LEARN ── */
+.cards-2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:32px}
+.why-card{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:20px;
+}
+.why-card-icon{
+  font-family:var(--font-mono);font-size:10px;color:var(--accent);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;
+}
+.why-card h4{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:8px;letter-spacing:-.01em}
+.why-card p{font-size:13px;color:var(--t2);line-height:1.6}
+.risk-card{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:20px;
+}
+.risk-card h4{font-size:13px;font-weight:600;color:var(--red);margin-bottom:8px;letter-spacing:.02em}
+.risk-card p{font-size:13px;color:var(--t2);line-height:1.6}
+.myth-list{display:flex;flex-direction:column;gap:1px;background:var(--line);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:32px}
+.myth-item{background:var(--bg1);padding:16px 20px}
+.myth-q{font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:500}
+.myth-a{font-size:13px;color:var(--t1);font-family:var(--font-mono)}
+.explainer-block{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-left:3px solid var(--accent);
+  border-radius:0 var(--radius-lg) var(--radius-lg) 0;
+  padding:24px;margin-bottom:28px;
+}
+.explainer-block h3{font-size:16px;font-weight:700;color:var(--t1);margin-bottom:12px;letter-spacing:-.01em}
+.explainer-block p{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:8px}
+.explainer-block p:last-child{margin-bottom:0}
+
+/* ── LEARN ── */
+.progress-bar-wrap{
+  background:var(--bg2);border-radius:2px;height:3px;
+  margin-bottom:8px;overflow:hidden;
+}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
+.progress-text{font-family:var(--font-mono);font-size:10px;color:var(--t3);margin-bottom:28px}
+.learn-step{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);margin-bottom:8px;overflow:hidden;
+  transition:border-color .15s;
+}
+.learn-step.done{border-color:rgba(34,197,94,.3)}
+.learn-step.done .step-num{background:rgba(34,197,94,.15);color:var(--green);border-color:rgba(34,197,94,.3)}
+.step-header{
+  display:flex;align-items:center;gap:12px;
+  padding:16px 20px;cursor:pointer;
+  transition:background .15s;
+}
+.step-header:hover{background:var(--bg2)}
+.step-num{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--bg3);border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:11px;color:var(--t3);
+  flex-shrink:0;transition:all .2s;
+}
+.step-title{font-size:14px;font-weight:600;color:var(--t1);flex:1;letter-spacing:-.01em}
+.step-tog{font-family:var(--font-mono);font-size:16px;color:var(--t3);transition:transform .2s}
+.step-tog.open{transform:rotate(45deg)}
+.step-body{display:none;padding:0 20px 20px 60px}
+.step-body.open{display:block}
+.step-body p{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:10px}
+.step-body ul{margin:8px 0 12px 16px}
+.step-body li{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:4px}
+.takeaway{
+  background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);
+  border-radius:var(--radius);padding:12px 14px;
+  font-family:var(--font-mono);font-size:11px;color:var(--accent);
+  margin:12px 0;line-height:1.6;
+}
+.complete-btn{
+  font-family:var(--font-display);font-size:11px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  background:none;border:1px solid var(--line2);border-radius:var(--radius);
+  padding:7px 16px;color:var(--t2);cursor:pointer;transition:all .15s;margin-top:8px;
+}
+.complete-btn:hover{background:var(--green);border-color:var(--green);color:#fff}
+.complete-btn.done{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:var(--green);cursor:default}
+.learn-done-msg{
+  background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);
+  border-radius:var(--radius-lg);padding:20px 24px;
+  font-family:var(--font-mono);font-size:12px;color:var(--green);
+  display:none;margin-top:20px;line-height:1.6;
+}
+.mistake-list{margin:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.mistake-list li{font-size:13px;color:var(--t2);line-height:1.6;padding-left:16px;position:relative}
+.mistake-list li::before{content:'—';position:absolute;left:0;color:var(--t3);font-family:var(--font-mono)}
+.mistake-list li strong{color:var(--t1)}
+
+/* ── PAPER TRADING ── */
+.pt-layout{display:grid;grid-template-columns:320px 1fr;gap:20px}
+@media(max-width:900px){.pt-layout{grid-template-columns:1fr}}
+.pt-panel{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);padding:20px;
+}
+.pt-panel-title{
+  font-family:var(--font-mono);font-size:10px;color:var(--t3);
+  letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line);
+}
+.pt-balance-row{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:6px;
+}
+.pt-balance-label{font-family:var(--font-mono);font-size:10px;color:var(--t3)}
+.pt-balance-val{font-family:var(--font-mono);font-size:20px;color:var(--t1)}
+.pt-pnl{font-family:var(--font-mono);font-size:12px}
+.pt-input-group{margin-bottom:14px}
+.pt-label{font-family:var(--font-mono);font-size:10px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:block}
+.pt-select,.pt-input{
+  width:100%;background:var(--bg2);
+  border:1px solid var(--line2);border-radius:var(--radius);
+  padding:9px 12px;font-family:var(--font-mono);font-size:12px;
+  color:var(--t1);outline:none;transition:border-color .15s;appearance:none;
+}
+.pt-select:focus,.pt-input:focus{border-color:var(--accent)}
+.pt-price-display{
+  background:var(--bg2);border:1px solid var(--line2);
+  border-radius:var(--radius);padding:9px 12px;
+  font-family:var(--font-mono);font-size:12px;color:var(--t1);
+  margin-bottom:14px;display:flex;justify-content:space-between;
+}
+.pt-price-display span{color:var(--t3)}
+.pt-tab-row{display:flex;gap:4px;margin-bottom:16px}
+.pt-tab{
+  flex:1;background:var(--bg2);border:1px solid var(--line2);
+  border-radius:var(--radius);padding:8px;
+  font-family:var(--font-mono);font-size:11px;font-weight:500;
+  color:var(--t2);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.06em;
+}
+.pt-tab.buy-tab.active{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.4);color:var(--green)}
+.pt-tab.sell-tab.active{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4);color:var(--red)}
+.pt-exec-btn{
+  width:100%;padding:11px;border:none;border-radius:var(--radius);
+  font-family:var(--font-display);font-size:12px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;
+}
+.pt-exec-btn.buy{background:var(--green);color:#fff}
+.pt-exec-btn.buy:hover{background:#16a34a}
+.pt-exec-btn.sell{background:var(--red);color:#fff}
+.pt-exec-btn.sell:hover{background:#dc2626}
+.pt-exec-btn:disabled{opacity:.4;cursor:not-allowed}
+.pt-msg{
+  font-family:var(--font-mono);font-size:11px;
+  padding:8px 12px;border-radius:var(--radius);
+  margin-top:10px;line-height:1.5;display:none;
+}
+.pt-msg.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green)}
+.pt-msg.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+/* Holdings */
+.holdings-table{width:100%;border-collapse:collapse}
+.holdings-table th{
+  font-family:var(--font-mono);font-size:9px;color:var(--t3);
+  letter-spacing:.12em;text-transform:uppercase;text-align:left;
+  padding:8px 10px;border-bottom:1px solid var(--line);
+}
+.holdings-table td{
+  font-family:var(--font-mono);font-size:12px;color:var(--t2);
+  padding:10px 10px;border-bottom:1px solid var(--line);
+  vertical-align:middle;
+}
+.holdings-table tr:last-child td{border-bottom:none}
+.holdings-table tr:hover td{background:var(--bg2);color:var(--t1)}
+.sell-quick-btn{
+  background:none;border:1px solid rgba(239,68,68,.3);border-radius:4px;
+  padding:3px 8px;font-family:var(--font-mono);font-size:10px;
+  color:var(--red);cursor:pointer;transition:all .12s;
+}
+.sell-quick-btn:hover{background:rgba(239,68,68,.12)}
+/* Trades log */
+.trade-log{
+  max-height:280px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:4px;
+}
+.trade-entry{
+  display:grid;grid-template-columns:50px 1fr auto auto;
+  gap:8px;align-items:center;
+  padding:8px 12px;border-radius:var(--radius);
+  background:var(--bg2);font-family:var(--font-mono);font-size:11px;
+}
+.trade-side-buy{color:var(--green)}
+.trade-side-sell{color:var(--red)}
+.trade-sym{color:var(--t1)}
+.trade-price{color:var(--t2)}
+.trade-time{color:var(--t3);font-size:10px}
+.trade-empty{
+  padding:32px;text-align:center;
+  font-family:var(--font-mono);font-size:11px;color:var(--t3);
+}
+/* Reset btn */
+.pt-reset{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;background:none;border:1px solid var(--line2);
+  border-radius:var(--radius);padding:5px 12px;color:var(--t3);
+  cursor:pointer;transition:all .15s;
+}
+.pt-reset:hover{border-color:var(--red);color:var(--red)}
+/* Portfolio chart */
+.pt-chart-wrap{height:200px;position:relative;margin-bottom:20px}
+/* Value display in holdings panel */
+.pt-total-row{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:12px 0;border-top:1px solid var(--line);margin-top:8px;
+}
+.pt-total-label{font-family:var(--font-mono);font-size:10px;color:var(--t3)}
+.pt-total-val{font-family:var(--font-mono);font-size:14px;color:var(--t1)}
+/* Feedback iframe */
+.feedback-frame-wrap{
+  background:var(--bg1);border:1px solid var(--line2);
+  border-radius:var(--radius-lg);overflow:hidden;
+}
+/* Footer */
+footer{
+  border-top:1px solid var(--line);
+  padding:20px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  max-width:1200px;margin:0 auto;
+}
+.footer-logo{font-size:13px;font-weight:800;letter-spacing:.15em;color:var(--t3);text-transform:uppercase}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-family:var(--font-mono);font-size:10px;color:var(--t3);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;transition:color .12s}
+.footer-links a:hover{color:var(--t1)}
+.footer-note{font-family:var(--font-mono);font-size:9px;color:var(--t3);letter-spacing:.06em}
+
+/* Responsive */
+@media(max-width:640px){
+  .hero-wrap{padding:40px 16px 32px}
+  .page-body,.page-header{padding-left:16px;padding-right:16px}
+  .home-cards{padding-left:16px;padding-right:16px}
+  .disclaimer{padding-left:16px;padding-right:16px}
+  nav{padding:0 16px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  footer{padding:20px 16px}
+}
+</style>
 </head>
 <body>
 
-<!-- ── NAV ─────────────────────────────────────────────────────────────── -->
 <nav id="mainNav">
-  <a class="nav-logo" href="#" onclick="navigate('home')">CIPHER</a>
-
+  <a class="nav-logo" href="#" onclick="navigate('home')">CI<span>PH</span>ER</a>
   <div class="nav-links" id="navLinks">
-    <button class="nav-btn active" data-page="home"      onclick="navigate('home')">Home</button>
-    <button class="nav-btn"        data-page="news"      onclick="navigate('news')">News</button>
-    <button class="nav-btn"        data-page="movers"    onclick="navigate('movers')">Top Movers</button>
-    <button class="nav-btn"        data-page="dashboard" onclick="navigate('dashboard')">Live Dashboard</button>
-    <button class="nav-btn"        data-page="why"       onclick="navigate('why')">Why Crypto?</button>
-    <button class="nav-btn"        data-page="learn"     onclick="navigate('learn')">Learn</button>
-    <button class="nav-btn"        data-page="feedback"  onclick="navigate('feedback')">Feedback</button>
+    <button class="nav-btn active" data-page="home" onclick="navigate('home')">Home</button>
+    <button class="nav-btn" data-page="news" onclick="navigate('news')">News</button>
+    <button class="nav-btn" data-page="movers" onclick="navigate('movers')">Movers</button>
+    <button class="nav-btn" data-page="dashboard" onclick="navigate('dashboard')">Dashboard</button>
+    <button class="nav-btn" data-page="trade" onclick="navigate('trade')">Paper Trade</button>
+    <button class="nav-btn" data-page="why" onclick="navigate('why')">Why Crypto</button>
+    <button class="nav-btn" data-page="learn" onclick="navigate('learn')">Learn</button>
+    <button class="nav-btn" data-page="feedback" onclick="navigate('feedback')">Feedback</button>
   </div>
-
   <div class="nav-right">
-    <div class="theme-switch" id="themeSwitch" onclick="toggleTheme()" title="Toggle light/dark mode">
-      <div class="switch-plate">
-        <div class="switch-lever" id="switchLever"></div>
-      </div>
-      <span class="switch-label" id="switchLabel">☀️</span>
-    </div>
-    <div class="status-pill"><span class="status-dot"></span>LIVE</div>
-    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">&#9681;</div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobile()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
-<!-- Mobile nav drawer -->
-<div class="mobile-nav" id="mobileNav">
-  <button class="mob-btn" data-page="home"      onclick="navigate('home');closeMobileNav()">Home</button>
-  <button class="mob-btn" data-page="news"      onclick="navigate('news');closeMobileNav()">News</button>
-  <button class="mob-btn" data-page="movers"    onclick="navigate('movers');closeMobileNav()">Top Movers</button>
-  <button class="mob-btn" data-page="dashboard" onclick="navigate('dashboard');closeMobileNav()">Live Dashboard</button>
-  <button class="mob-btn" data-page="why"       onclick="navigate('why');closeMobileNav()">Why Crypto?</button>
-  <button class="mob-btn" data-page="learn"     onclick="navigate('learn');closeMobileNav()">Learn</button>
-  <button class="mob-btn" data-page="feedback"  onclick="navigate('feedback');closeMobileNav()">Feedback</button>
+<div class="mobile-drawer" id="mobileDrawer">
+  <button class="mob-btn active" data-page="home" onclick="navigate('home');closeMobile()">Home</button>
+  <button class="mob-btn" data-page="news" onclick="navigate('news');closeMobile()">News</button>
+  <button class="mob-btn" data-page="movers" onclick="navigate('movers');closeMobile()">Movers</button>
+  <button class="mob-btn" data-page="dashboard" onclick="navigate('dashboard');closeMobile()">Dashboard</button>
+  <button class="mob-btn" data-page="trade" onclick="navigate('trade');closeMobile()">Paper Trade</button>
+  <button class="mob-btn" data-page="why" onclick="navigate('why');closeMobile()">Why Crypto</button>
+  <button class="mob-btn" data-page="learn" onclick="navigate('learn');closeMobile()">Learn</button>
+  <button class="mob-btn" data-page="feedback" onclick="navigate('feedback');closeMobile()">Feedback</button>
 </div>
 
-<!-- ── PAGES ────────────────────────────────────────────────────────────── -->
 <main id="appRoot">
 
-<!-- ══ HOME ══════════════════════════════════════════════════════════════ -->
+<!-- ══════════ HOME ══════════ -->
 <section class="page active" id="page-home">
-  <!-- Legacy compatibility -->
-  <div class="bg-canvas"></div>
-  <div class="grid-overlay"></div>
-
-  <div class="hero">
-    <!-- Left column: copy + mood -->
+  <div class="hero-wrap">
     <div class="hero-left">
-      <div class="hero-tag">For Complete Beginners · No Experience Needed</div>
-      <h1 class="hero-title">Crypto Made<br><span class="gold-text">Simple.</span></h1>
-      <p class="hero-sub">Crypto can feel confusing and overwhelming. CIPHER explains what's happening — in plain English, no jargon.</p>
-
-      <div class="mood-section">
-        <p class="mood-label">How are you feeling about crypto today?</p>
-        <div class="mood-btns">
-          <button class="mood-btn" onclick="setMood('curious')">🤔 Curious</button>
-          <button class="mood-btn" onclick="setMood('confused')">😕 Confused</button>
-          <button class="mood-btn" onclick="setMood('excited')">🚀 Excited</button>
-          <button class="mood-btn" onclick="setMood('nervous')">😬 Nervous</button>
+      <div class="hero-eyebrow">For complete beginners &mdash; no experience needed</div>
+      <h1 class="hero-h1">Crypto made<br><em>legible.</em></h1>
+      <p class="hero-sub">Markets are moving. Crypto feels complex. CIPHER cuts through the noise and explains what matters, in plain language.</p>
+      <div class="hero-cta-row">
+        <button class="btn-primary" onclick="navigate('learn')">Start learning</button>
+        <button class="btn-outline" onclick="navigate('dashboard')">Live prices</button>
+      </div>
+      <div class="hero-mood">
+        <div class="mood-label">How are you feeling about crypto today?</div>
+        <div class="mood-row">
+          <button class="mood-btn" onclick="setMood('curious')">Curious</button>
+          <button class="mood-btn" onclick="setMood('confused')">Confused</button>
+          <button class="mood-btn" onclick="setMood('excited')">Excited</button>
+          <button class="mood-btn" onclick="setMood('nervous')">Nervous</button>
         </div>
-        <div class="mood-response" id="moodResponse"></div>
+        <div class="mood-resp" id="moodResp"></div>
       </div>
     </div>
-
-    <!-- Right column: hero illustration -->
     <div class="hero-right">
-      <div class="hero-illustration">
-        <svg viewBox="0 0 480 420" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:100%;max-width:480px">
-          <defs>
-            <!-- Node glow -->
-            <radialGradient id="nodeGlowBlue" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#2d6ef7" stop-opacity="0.25"/>
-              <stop offset="100%" stop-color="#2d6ef7" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="nodeGlowTeal" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#0ecfb3" stop-opacity="0.22"/>
-              <stop offset="100%" stop-color="#0ecfb3" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="nodeGlowPurple" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.2"/>
-              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
-            </radialGradient>
-            <!-- Card gradient -->
-            <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1a2d50" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#0d1c38" stop-opacity="0.95"/>
-            </linearGradient>
-            <linearGradient id="cardGrad2" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1a3050" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#0d2040" stop-opacity="0.95"/>
-            </linearGradient>
-            <!-- Progress bar gradient -->
-            <linearGradient id="progressGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#2d6ef7"/>
-              <stop offset="100%" stop-color="#0ecfb3"/>
-            </linearGradient>
-            <!-- Price line gradient -->
-            <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#2d6ef7"/>
-              <stop offset="50%" stop-color="#0ecfb3"/>
-              <stop offset="100%" stop-color="#8b5cf6"/>
-            </linearGradient>
-          </defs>
-
-          <!-- ── Blockchain network background lines ── -->
-          <!-- Far connection lines (faint) -->
-          <line x1="80" y1="60" x2="240" y2="130" stroke="rgba(45,110,247,0.15)" stroke-width="1" stroke-dasharray="4 6"/>
-          <line x1="240" y1="130" x2="400" y2="70" stroke="rgba(45,110,247,0.12)" stroke-width="1" stroke-dasharray="4 6"/>
-          <line x1="400" y1="70" x2="430" y2="200" stroke="rgba(14,207,179,0.14)" stroke-width="1" stroke-dasharray="4 6"/>
-          <line x1="80" y1="60" x2="50" y2="200" stroke="rgba(139,92,246,0.13)" stroke-width="1" stroke-dasharray="4 6"/>
-          <line x1="50" y1="200" x2="240" y2="130" stroke="rgba(45,110,247,0.1)" stroke-width="1" stroke-dasharray="4 6"/>
-          <line x1="430" y1="200" x2="380" y2="350" stroke="rgba(14,207,179,0.12)" stroke-width="1" stroke-dasharray="4 6"/>
-          <line x1="50" y1="200" x2="100" y2="350" stroke="rgba(139,92,246,0.1)" stroke-width="1" stroke-dasharray="4 6"/>
-          <line x1="100" y1="350" x2="380" y2="350" stroke="rgba(45,110,247,0.08)" stroke-width="1" stroke-dasharray="4 6"/>
-          <line x1="240" y1="130" x2="240" y2="390" stroke="rgba(45,110,247,0.07)" stroke-width="1" stroke-dasharray="4 6"/>
-
-          <!-- ── Background glow spots ── -->
-          <circle cx="240" cy="140" r="90" fill="url(#nodeGlowBlue)"/>
-          <circle cx="410" cy="80" r="60" fill="url(#nodeGlowTeal)"/>
-          <circle cx="70" cy="210" r="55" fill="url(#nodeGlowPurple)"/>
-
-          <!-- ── Main UI card: price chart ── -->
-          <rect x="108" y="140" width="264" height="162" rx="16" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <!-- Card header -->
-          <circle cx="133" cy="165" r="12" fill="rgba(45,110,247,0.2)" stroke="rgba(45,110,247,0.4)" stroke-width="1"/>
-          <text x="133" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#2d6ef7">₿</text>
-          <text x="152" y="162" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="rgba(240,244,255,0.9)">Bitcoin</text>
-          <text x="152" y="174" font-family="Inter,sans-serif" font-size="9" font-weight="500" fill="rgba(138,157,192,0.8)">BTC/USD</text>
-          <!-- Price badge -->
-          <rect x="290" y="154" width="68" height="22" rx="6" fill="rgba(0,200,150,0.12)" stroke="rgba(0,200,150,0.25)" stroke-width="0.5"/>
-          <text x="324" y="169" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#00c896">+4.2%</text>
-          <!-- Price value -->
-          <text x="128" y="200" font-family="Inter,sans-serif" font-size="22" font-weight="800" fill="rgba(240,244,255,0.95)" letter-spacing="-0.5">$67,420</text>
-
-          <!-- Mini sparkline chart -->
-          <polyline
-            points="118,270 140,265 162,272 184,255 206,260 228,244 250,248 272,238 294,242 316,228 338,220 360,212"
-            fill="none"
-            stroke="url(#lineGrad)"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <!-- Fill under line -->
-          <path
-            d="M118,270 140,265 162,272 184,255 206,260 228,244 250,248 272,238 294,242 316,228 338,220 360,212 L360,285 L118,285 Z"
-            fill="rgba(45,110,247,0.06)"
-          />
-
-          <!-- ── Floating card: Learn progress ── -->
-          <rect x="24" y="232" width="145" height="80" rx="14" fill="url(#cardGrad2)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <text x="40" y="255" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(138,157,192,0.7)" letter-spacing="0.06em">LEARNING PATH</text>
-          <text x="40" y="272" font-family="Inter,sans-serif" font-size="14" font-weight="800" fill="rgba(240,244,255,0.9)">5 of 7</text>
-          <text x="40" y="284" font-family="Inter,sans-serif" font-size="10" fill="rgba(138,157,192,0.7)">lessons done</text>
-          <!-- Progress bar -->
-          <rect x="40" y="294" width="113" height="5" rx="2.5" fill="rgba(255,255,255,0.08)"/>
-          <rect x="40" y="294" width="81" height="5" rx="2.5" fill="url(#progressGrad)"/>
-
-          <!-- ── Floating card: News tag ── -->
-          <rect x="312" y="232" width="148" height="68" rx="14" fill="url(#cardGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <text x="328" y="253" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="rgba(138,157,192,0.7)" letter-spacing="0.06em">LATEST NEWS</text>
-          <text x="328" y="270" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="rgba(240,244,255,0.9)">Fed signals rate</text>
-          <text x="328" y="284" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="rgba(240,244,255,0.9)">cut in Q3 2026</text>
-          <rect x="328" y="290" width="55" height="5" rx="2.5" fill="rgba(45,110,247,0.3)"/>
-
-          <!-- ── Floating badge: Beginner friendly ── -->
-          <rect x="150" y="332" width="180" height="34" rx="17" fill="rgba(45,110,247,0.12)" stroke="rgba(45,110,247,0.3)" stroke-width="1"/>
-          <circle cx="173" cy="349" r="7" fill="rgba(0,200,150,0.25)" stroke="rgba(0,200,150,0.5)" stroke-width="1"/>
-          <text x="173" y="353" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#00c896">✓</text>
-          <text x="187" y="353" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="rgba(240,244,255,0.85)">No experience needed</text>
-
-          <!-- ── Network nodes (circles with glows) ── -->
-          <!-- Node 1: top-left -->
-          <circle cx="80" cy="60" r="22" fill="rgba(6,11,20,0.8)" stroke="rgba(139,92,246,0.45)" stroke-width="1.5"/>
-          <circle cx="80" cy="60" r="10" fill="rgba(139,92,246,0.2)"/>
-          <text x="80" y="65" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#8b5cf6">Ξ</text>
-
-          <!-- Node 2: top-right -->
-          <circle cx="400" cy="70" r="20" fill="rgba(6,11,20,0.8)" stroke="rgba(14,207,179,0.45)" stroke-width="1.5"/>
-          <circle cx="400" cy="70" r="9" fill="rgba(14,207,179,0.2)"/>
-          <text x="400" y="75" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#0ecfb3">◎</text>
-
-          <!-- Node 3: left-mid -->
-          <circle cx="50" cy="200" r="18" fill="rgba(6,11,20,0.8)" stroke="rgba(45,110,247,0.4)" stroke-width="1.5"/>
-          <circle cx="50" cy="200" r="8" fill="rgba(45,110,247,0.2)"/>
-          <text x="50" y="205" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#2d6ef7">⬡</text>
-
-          <!-- Node 4: right-mid -->
-          <circle cx="430" cy="200" r="18" fill="rgba(6,11,20,0.8)" stroke="rgba(245,166,35,0.4)" stroke-width="1.5"/>
-          <circle cx="430" cy="200" r="8" fill="rgba(245,166,35,0.15)"/>
-          <text x="430" y="205" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#f5a623">◈</text>
-
-          <!-- Node 5: bottom-left -->
-          <circle cx="100" cy="360" r="16" fill="rgba(6,11,20,0.8)" stroke="rgba(139,92,246,0.35)" stroke-width="1"/>
-          <circle cx="100" cy="360" r="7" fill="rgba(139,92,246,0.15)"/>
-          <text x="100" y="364" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="#8b5cf6">⬡</text>
-
-          <!-- Node 6: bottom-right -->
-          <circle cx="380" cy="360" r="16" fill="rgba(6,11,20,0.8)" stroke="rgba(14,207,179,0.35)" stroke-width="1"/>
-          <circle cx="380" cy="360" r="7" fill="rgba(14,207,179,0.15)"/>
-          <text x="380" y="364" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="#0ecfb3">◎</text>
-
-          <!-- Central hub node -->
-          <circle cx="240" cy="130" r="28" fill="rgba(6,11,20,0.9)" stroke="rgba(45,110,247,0.6)" stroke-width="2"/>
-          <circle cx="240" cy="130" r="14" fill="rgba(45,110,247,0.2)"/>
-          <text x="240" y="136" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="800" fill="#2d6ef7">₿</text>
-
-          <!-- Animated pulse ring on central node (CSS animation) -->
-          <circle cx="240" cy="130" r="36" fill="none" stroke="rgba(45,110,247,0.2)" stroke-width="1.5" stroke-dasharray="4 4">
-            <animateTransform attributeName="transform" type="rotate" from="0 240 130" to="360 240 130" dur="12s" repeatCount="indefinite"/>
-          </circle>
-
-          <!-- Small data dots along network lines -->
-          <circle cx="160" cy="95" r="3" fill="rgba(45,110,247,0.6)"/>
-          <circle cx="320" cy="100" r="3" fill="rgba(14,207,179,0.6)"/>
-          <circle cx="215" cy="165" r="2.5" fill="rgba(139,92,246,0.5)"/>
-          <circle cx="415" cy="135" r="2.5" fill="rgba(245,166,35,0.5)"/>
-          <circle cx="65" cy="130" r="2.5" fill="rgba(45,110,247,0.5)"/>
-        </svg>
+      <div class="hero-stats">
+        <div class="hero-stats-head">
+          <span>LIVE PRICES</span>
+          <span id="heroUpdated">—</span>
+        </div>
+        <div id="heroCoins"><div class="loading-wrap" style="padding:20px"><div class="spin"></div>Loading…</div></div>
       </div>
     </div>
   </div>
 
   <div class="home-cards">
     <div class="home-card" onclick="navigate('news')">
-      <div class="home-card-icon">📰</div>
+      <div class="home-card-num">01</div>
       <h3>What's happening today?</h3>
-      <p>The latest crypto news, explained in simple language. No jargon, no hype.</p>
-      <div class="home-card-cta">Read the news →</div>
+      <p>The latest crypto headlines, written in plain language — no jargon, no hype.</p>
+      <div class="home-card-arrow">Read the news &rarr;</div>
     </div>
     <div class="home-card" onclick="navigate('movers')">
-      <div class="home-card-icon">📈</div>
-      <h3>Which coins are moving & why?</h3>
-      <p>See today's biggest gainers and losers, with plain-English explanations of why.</p>
-      <div class="home-card-cta">See top movers →</div>
+      <div class="home-card-num">02</div>
+      <h3>Which coins are moving?</h3>
+      <p>Today's biggest gainers and losers, with clear explanations of why.</p>
+      <div class="home-card-arrow">See movers &rarr;</div>
+    </div>
+    <div class="home-card" onclick="navigate('trade')">
+      <div class="home-card-num">03</div>
+      <h3>Practice trading, zero risk</h3>
+      <p>Trade with $10,000 of simulated money. Learn the mechanics without losing real funds.</p>
+      <div class="home-card-arrow">Open paper trader &rarr;</div>
     </div>
     <div class="home-card" onclick="navigate('why')">
-      <div class="home-card-icon">🤔</div>
+      <div class="home-card-num">04</div>
       <h3>Why do people use crypto?</h3>
-      <p>Understand what crypto actually is, why people use it, and what the risks are.</p>
-      <div class="home-card-cta">Learn the basics →</div>
+      <p>An honest look at what crypto actually is, who uses it, and the real risks.</p>
+      <div class="home-card-arrow">Learn the basics &rarr;</div>
     </div>
   </div>
-
-  <div class="home-disclaimer">
-    ⚠️ CIPHER is an educational platform only. Nothing here is financial advice.
+  <div class="disclaimer">
+    CIPHER is an educational platform only. Nothing here constitutes financial advice.
   </div>
 </section>
 
-<!-- ══ NEWS ══════════════════════════════════════════════════════════════ -->
+<!-- ══════════ NEWS ══════════ -->
 <section class="page" id="page-news">
   <div class="page-header">
     <div class="page-tag">Latest Updates</div>
     <h2 class="page-title">What's Happening in Crypto</h2>
-    <p class="page-desc">Today's crypto news, written in plain English so anyone can understand it.</p>
+    <p class="page-desc">Today's headlines, written so anyone can understand them.</p>
   </div>
-  <div id="newsContainer">
-    <div class="loading"><div class="spin"></div>Loading news…</div>
+  <div class="page-body">
+    <div id="newsContainer"><div class="loading-wrap"><div class="spin"></div>Loading news…</div></div>
   </div>
 </section>
 
-<!-- ══ MOVERS ═════════════════════════════════════════════════════════════ -->
+<!-- ══════════ MOVERS ══════════ -->
 <section class="page" id="page-movers">
   <div class="page-header">
     <div class="page-tag">Daily Movement</div>
     <h2 class="page-title">Today's Top Movers</h2>
-    <p class="page-desc">The coins rising and falling the most today — with simple explanations.</p>
+    <p class="page-desc">Biggest price swings today, with plain-English context.</p>
   </div>
-  <div id="moversContainer">
-    <div class="loading"><div class="spin"></div>Loading movers…</div>
-  </div>
-  <div class="view-all-wrap">
-    <button class="btn-outline" onclick="navigate('dashboard')">View All Coins in Live Dashboard →</button>
+  <div class="page-body">
+    <div id="moversContainer"><div class="loading-wrap"><div class="spin"></div>Loading movers…</div></div>
   </div>
 </section>
 
-<!-- ══ LIVE DASHBOARD ═════════════════════════════════════════════════════ -->
+<!-- ══════════ DASHBOARD ══════════ -->
 <section class="page" id="page-dashboard">
   <div class="page-header">
     <div class="page-tag">Real-Time Data</div>
     <h2 class="page-title">Live Dashboard</h2>
-    <p class="page-desc">Live prices, 5-year history charts, and performance comparisons.</p>
-    <div class="last-updated-bar">
-      Last updated: <span id="lastUpdated">—</span>
-      <button class="refresh-btn" onclick="refreshDashboard()">↻ Refresh</button>
+    <p class="page-desc">Live prices, historical charts, and performance comparisons.</p>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--t3)">Updated: <span id="lastUpdated">—</span></span>
+      <button class="btn-outline" style="padding:5px 14px;font-size:11px" onclick="refreshDashboard()">Refresh</button>
     </div>
   </div>
 
-  <div class="ticker-bar-wrap">
-    <div class="ticker-inner" id="tickerInner">
-      <span class="tick">BTC <b id="t-btc">—</b> <em id="t-btc-c">—</em></span>
-      <span class="tick">ETH <b id="t-eth">—</b> <em id="t-eth-c">—</em></span>
-      <span class="tick">SOL <b id="t-sol">—</b> <em id="t-sol-c">—</em></span>
-      <span class="tick">BNB <b id="t-bnb">—</b> <em id="t-bnb-c">—</em></span>
-      <span class="tick">XRP <b id="t-xrp">—</b> <em id="t-xrp-c">—</em></span>
-      <span class="tick">ADA <b id="t-ada">—</b> <em id="t-ada-c">—</em></span>
-      <span class="tick">DOGE <b id="t-doge">—</b> <em id="t-doge-c">—</em></span>
-      <span class="tick">AVAX <b id="t-avax">—</b> <em id="t-avax-c">—</em></span>
-      <span class="tick">BTC <b id="t-btc2">—</b> <em id="t-btc-c2">—</em></span>
-      <span class="tick">ETH <b id="t-eth2">—</b> <em id="t-eth-c2">—</em></span>
-      <span class="tick">SOL <b id="t-sol2">—</b> <em id="t-sol-c2">—</em></span>
-      <span class="tick">BNB <b id="t-bnb2">—</b> <em id="t-bnb-c2">—</em></span>
-      <span class="tick">XRP <b id="t-xrp2">—</b> <em id="t-xrp-c2">—</em></span>
-      <span class="tick">ADA <b id="t-ada2">—</b> <em id="t-ada-c2">—</em></span>
-      <span class="tick">DOGE <b id="t-doge2">—</b> <em id="t-doge-c2">—</em></span>
-      <span class="tick">AVAX <b id="t-avax2">—</b> <em id="t-avax-c2">—</em></span>
+  <div class="ticker-wrap" id="tickerWrap" style="display:none">
+    <div class="ticker-inner" id="tickerInner"></div>
+  </div>
+
+  <div class="page-body">
+    <div class="section-label">Live Prices — Click a coin to see its history</div>
+    <div class="coin-grid" id="coinGrid"><div class="loading-wrap"><div class="spin"></div>Fetching live prices…</div></div>
+
+    <div class="chart-wrap" id="historyPanel" style="display:none">
+      <div class="chart-head">
+        <div class="chart-coin-info" id="chartCoinInfo"></div>
+        <div style="text-align:right">
+          <div class="chart-price" id="chartPrice"></div>
+          <div class="chart-return-badges" id="chartBadges"></div>
+        </div>
+      </div>
+      <div class="period-btns" style="margin-bottom:16px" id="periodBtns"></div>
+      <div style="height:280px;position:relative"><canvas id="histChart" role="img" aria-label="Price history chart"></canvas></div>
     </div>
-  </div>
 
-  <div class="section-label" style="margin-top:8px">Live Prices — Click a coin to see its history</div>
-  <div class="coin-grid" id="coinGrid">
-    <div class="loading"><div class="spin"></div>Fetching live prices…</div>
-  </div>
+    <div class="section-label" style="margin-top:40px">Performance Comparison <span style="font-weight:400;color:var(--t3)">(normalised to 100)</span></div>
+    <div class="compare-select-wrap">
+      <div class="compare-checkboxes" id="compareChecks"></div>
+      <div style="height:260px;position:relative"><canvas id="cmpChart" role="img" aria-label="Performance comparison chart"></canvas></div>
+    </div>
 
-  <div class="section-label" id="historyLabel" style="margin-top:32px">5-Year Price History</div>
-  <div class="coin-selector" id="coinSelector"></div>
-  <div class="chart-panel" id="historyPanel">
-    <div class="loading"><div class="spin"></div>Loading chart…</div>
-  </div>
-
-  <div class="section-label" style="margin-top:32px">Performance Comparison <span style="opacity:.5;font-size:10px;font-weight:400">(normalized to 100 at start)</span></div>
-  <div class="compare-controls" id="compareControls"></div>
-  <div class="cmp-chart-panel">
-    <div class="cmp-legend" id="cmpLegend"></div>
-    <div class="chart-container"><canvas id="cmpChart"></canvas></div>
-  </div>
-
-  <div class="section-label" style="margin-top:32px">Key Milestones</div>
-  <div class="coin-selector" id="msCoinSelector"></div>
-  <div id="milestonesPanel">
-    <div class="loading"><div class="spin"></div>Loading milestones…</div>
+    <div class="section-label" style="margin-top:40px">Key Milestones</div>
+    <div id="msPanel"><div class="loading-wrap"><div class="spin"></div>Loading milestones…</div></div>
   </div>
 </section>
 
-<!-- ══ WHY CRYPTO ═════════════════════════════════════════════════════════ -->
+<!-- ══════════ PAPER TRADE ══════════ -->
+<section class="page" id="page-trade">
+  <div class="page-header">
+    <div class="page-tag">Simulated Trading</div>
+    <h2 class="page-title">Paper Trading</h2>
+    <p class="page-desc">Practice buying and selling crypto with $10,000 of virtual money. All prices are real. No real money is ever used.</p>
+  </div>
+  <div class="page-body">
+
+    <div class="pt-layout">
+      <!-- LEFT: order entry -->
+      <div>
+        <div class="pt-panel" style="margin-bottom:16px">
+          <div class="pt-panel-title">Portfolio</div>
+          <div class="pt-balance-row">
+            <span class="pt-balance-label">Cash balance</span>
+            <span class="pt-balance-val" id="ptCash">$10,000.00</span>
+          </div>
+          <div class="pt-balance-row" style="margin-bottom:12px">
+            <span class="pt-balance-label">Portfolio value</span>
+            <span class="pt-balance-val" id="ptPortVal">$10,000.00</span>
+          </div>
+          <div class="pt-balance-row" style="margin-bottom:0">
+            <span class="pt-balance-label">Total P&amp;L</span>
+            <span class="pt-pnl" id="ptPnl">$0.00 (0.00%)</span>
+          </div>
+          <div class="pt-chart-wrap" style="margin-top:16px">
+            <canvas id="ptEquityChart" role="img" aria-label="Portfolio equity curve"></canvas>
+          </div>
+          <button class="pt-reset" onclick="ptReset()">Reset account</button>
+        </div>
+
+        <div class="pt-panel">
+          <div class="pt-panel-title">Place Order</div>
+          <div class="pt-tab-row">
+            <button class="pt-tab buy-tab active" id="ptBuyTab" onclick="ptSetSide('buy')">Buy</button>
+            <button class="pt-tab sell-tab" id="ptSellTab" onclick="ptSetSide('sell')">Sell</button>
+          </div>
+          <div class="pt-input-group">
+            <label class="pt-label">Coin</label>
+            <select class="pt-select" id="ptCoinSelect" onchange="ptUpdatePrice()">
+              <option value="">Loading coins…</option>
+            </select>
+          </div>
+          <div class="pt-price-display">
+            <span>Current price</span>
+            <span id="ptCurrentPrice">—</span>
+          </div>
+          <div class="pt-input-group">
+            <label class="pt-label">Amount (USD)</label>
+            <input class="pt-input" type="number" id="ptAmount" placeholder="Enter USD amount" min="1" step="1" oninput="ptCalcQty()"/>
+          </div>
+          <div class="pt-price-display">
+            <span>Quantity</span>
+            <span id="ptQty">—</span>
+          </div>
+          <button class="pt-exec-btn buy" id="ptExecBtn" onclick="ptExecute()">Execute Buy</button>
+          <div class="pt-msg" id="ptMsg"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: holdings + log -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="pt-panel">
+          <div class="pt-panel-title" style="display:flex;justify-content:space-between;align-items:center">
+            <span>Holdings</span>
+            <span id="ptHoldCount" style="font-family:var(--font-mono);font-size:10px;color:var(--t3)">0 positions</span>
+          </div>
+          <div id="ptHoldings">
+            <div class="trade-empty">No positions yet. Place your first trade.</div>
+          </div>
+          <div class="pt-total-row">
+            <span class="pt-total-label">Holdings value</span>
+            <span class="pt-total-val" id="ptHoldingsVal">$0.00</span>
+          </div>
+        </div>
+
+        <div class="pt-panel" style="flex:1">
+          <div class="pt-panel-title">Trade History</div>
+          <div id="ptTradeLog">
+            <div class="trade-empty">No trades yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;padding:14px 18px;background:var(--bg1);border:1px solid var(--line2);border-radius:var(--radius);font-family:var(--font-mono);font-size:11px;color:var(--t3);line-height:1.8">
+      Paper trading uses live market prices from the API. Trades execute at the current price at the time you click. Results reflect real price movements but no real money is involved. This is for educational purposes only.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ WHY CRYPTO ══════════ -->
 <section class="page" id="page-why">
   <div class="page-header">
     <div class="page-tag">For Beginners</div>
     <h2 class="page-title">Why Do People Use Crypto?</h2>
-    <p class="page-desc">A clear, honest explanation for anyone who's ever wondered what crypto actually is.</p>
+    <p class="page-desc">A clear, honest explanation for anyone who has ever wondered what crypto actually is.</p>
   </div>
+  <div class="page-body">
+    <div class="explainer-block">
+      <h3>What is Cryptocurrency?</h3>
+      <p>Cryptocurrency is digital money that exists only on the internet. Unlike the euro or dollar — which are controlled by governments and banks — crypto is managed by a global network of computers following shared rules.</p>
+      <p>Think of it like email versus postal mail. Email did not replace mail instantly — it took time, had new problems, but solved things mail could not. Crypto is doing something similar to money.</p>
+    </div>
 
-  <div class="explainer-block">
-    <h3>💡 What is Cryptocurrency?</h3>
-    <p>Cryptocurrency is digital money that exists only on the internet. Unlike the euro or dollar — which are controlled by governments and banks — crypto is managed by a global network of computers following shared rules.</p>
-    <p>Think of it like email vs. postal mail. Email didn't replace mail instantly — it took time, it had new problems, but it solved things mail couldn't. Crypto is doing something similar to money.</p>
-  </div>
-
-  <div class="why-grid">
-    <div class="why-card">
-      <div class="why-icon">🌍</div>
-      <h4>Global Transfers</h4>
-      <p>Sending money internationally can take days and cost high fees. Crypto can move value across borders in minutes, for a fraction of the cost.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">🏦</div>
-      <h4>No Bank Required</h4>
-      <p>1.4 billion adults worldwide have no access to a bank. Crypto gives anyone with a phone access to financial services.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">📊</div>
-      <h4>Investment Potential</h4>
-      <p>Some people buy crypto hoping its value increases over time — similar to buying shares. This comes with significant risk of loss.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">🛡️</div>
-      <h4>Inflation Hedge</h4>
-      <p>Bitcoin has a fixed supply of 21 million coins. Some use it to protect savings from inflation, since governments can't "print more."</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">⚡</div>
-      <h4>Programmable Money</h4>
-      <p>Ethereum lets developers build financial apps — loans, insurance, savings — that run automatically without a bank or company controlling them.</p>
-    </div>
-    <div class="why-card">
-      <div class="why-icon">🎮</div>
-      <h4>Digital Ownership</h4>
-      <p>Crypto enables true ownership of digital items — art, game items, music rights — that can't be deleted or taken away by any company.</p>
-    </div>
-  </div>
-
-  <div class="risk-section">
-    <h3>⚠️ The Honest Risks</h3>
-    <div class="risk-grid">
-      <div class="risk-card bad">
-        <h4>🎢 Extreme Volatility</h4>
-        <p>Bitcoin has dropped 80% from its peak. Twice. It has also risen 10,000%+. If you invest, be prepared for wild swings in both directions.</p>
+    <div class="section-label" style="margin-bottom:16px">Why people use it</div>
+    <div class="cards-2col" style="margin-bottom:40px">
+      <div class="why-card">
+        <div class="why-card-icon">Global Transfers</div>
+        <h4>Move money across borders</h4>
+        <p>Sending money internationally can take days and cost significant fees. Crypto can move value across borders in minutes, for a fraction of the cost.</p>
       </div>
-      <div class="risk-card bad">
-        <h4>🔓 No Safety Net</h4>
-        <p>If you lose your password ("seed phrase"), your crypto is gone forever. There's no "forgot password" button and no bank to call.</p>
+      <div class="why-card">
+        <div class="why-card-icon">Financial Access</div>
+        <h4>No bank required</h4>
+        <p>1.4 billion adults worldwide have no access to a bank. Crypto gives anyone with a phone access to financial services.</p>
       </div>
-      <div class="risk-card bad">
-        <h4>🎣 Scams Are Common</h4>
-        <p>The crypto space is full of scams — fake projects, pump-and-dump schemes, and phishing attempts. If it sounds too good to be true, it is.</p>
+      <div class="why-card">
+        <div class="why-card-icon">Investment</div>
+        <h4>Potential returns</h4>
+        <p>Some people buy crypto hoping its value increases over time, similar to buying shares. This comes with significant risk of loss.</p>
       </div>
-      <div class="risk-card bad">
-        <h4>📜 Regulation Risk</h4>
-        <p>Governments worldwide are still creating rules around crypto. New regulations could affect the value of your holdings.</p>
+      <div class="why-card">
+        <div class="why-card-icon">Fixed Supply</div>
+        <h4>Inflation hedge</h4>
+        <p>Bitcoin has a fixed supply of 21 million coins. Some use it to protect savings from inflation, since no one can print more.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card-icon">Smart Contracts</div>
+        <h4>Programmable money</h4>
+        <p>Ethereum lets developers build financial apps — loans, insurance, savings — that run automatically without a bank controlling them.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card-icon">Ownership</div>
+        <h4>True digital ownership</h4>
+        <p>Crypto enables genuine ownership of digital items — art, game assets, music rights — that cannot be deleted by any company.</p>
       </div>
     </div>
-  </div>
 
-  <div class="myth-section">
-    <h3>🧹 Common Myths, Busted</h3>
+    <div class="section-label" style="margin-bottom:16px">The honest risks</div>
+    <div class="cards-2col" style="margin-bottom:40px">
+      <div class="risk-card">
+        <h4>Extreme Volatility</h4>
+        <p>Bitcoin has dropped 80% from its peak. Twice. It has also risen 10,000%+. Be prepared for wild swings in both directions.</p>
+      </div>
+      <div class="risk-card">
+        <h4>No Safety Net</h4>
+        <p>If you lose your password (seed phrase), your crypto is gone forever. There is no forgot password button and no bank to call.</p>
+      </div>
+      <div class="risk-card">
+        <h4>Scams Are Common</h4>
+        <p>The space is full of scams — fake projects, pump-and-dump schemes, and phishing attacks. If it sounds too good to be true, it is.</p>
+      </div>
+      <div class="risk-card">
+        <h4>Regulatory Risk</h4>
+        <p>Governments worldwide are still writing rules around crypto. New regulations could significantly affect the value of your holdings.</p>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-bottom:16px">Common myths, cleared up</div>
     <div class="myth-list">
       <div class="myth-item">
-        <div class="myth-q">❌ "Crypto is only used for crime"</div>
-        <div class="myth-a">✅ Less than 1% of crypto transactions are linked to illegal activity. Cash is used far more for crime.</div>
+        <div class="myth-q">Myth: Crypto is only used for crime</div>
+        <div class="myth-a">Fact: Less than 1% of crypto transactions are linked to illegal activity. Cash is far more widely used for crime.</div>
       </div>
       <div class="myth-item">
-        <div class="myth-q">❌ "Bitcoin is anonymous"</div>
-        <div class="myth-a">✅ Bitcoin transactions are public and permanent on the blockchain. It's actually easier to trace than cash.</div>
+        <div class="myth-q">Myth: Bitcoin is anonymous</div>
+        <div class="myth-a">Fact: Bitcoin transactions are public and permanent on the blockchain. It is actually easier to trace than cash.</div>
       </div>
       <div class="myth-item">
-        <div class="myth-q">❌ "It's too late to get into crypto"</div>
-        <div class="myth-a">✅ People have said this since Bitcoin was $1, $100, $1,000, and $10,000. Nobody knows the future.</div>
+        <div class="myth-q">Myth: It is too late to get into crypto</div>
+        <div class="myth-a">Fact: People have said this since Bitcoin was $1, $100, $1,000, and $10,000. Nobody knows the future.</div>
       </div>
       <div class="myth-item">
-        <div class="myth-q">❌ "All crypto is the same"</div>
-        <div class="myth-a">✅ There are thousands of coins with very different purposes — from digital gold (Bitcoin) to programmable platforms (Ethereum) to meme coins with no utility.</div>
+        <div class="myth-q">Myth: All crypto is the same</div>
+        <div class="myth-a">Fact: There are thousands of coins with very different purposes — from digital gold to programmable platforms to tokens with no real utility.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══ LEARN ══════════════════════════════════════════════════════════════ -->
+<!-- ══════════ LEARN ══════════ -->
 <section class="page" id="page-learn">
   <div class="page-header">
     <div class="page-tag">Learning Path</div>
     <h2 class="page-title">Learn Crypto Step by Step</h2>
     <p class="page-desc">Start from zero. Each lesson builds on the last. No experience needed.</p>
   </div>
+  <div class="page-body">
+    <div class="progress-bar-wrap"><div class="progress-fill" id="learnFill" style="width:0%"></div></div>
+    <div class="progress-text" id="learnText">0 of 7 lessons completed</div>
 
-  <div class="learn-progress-bar">
-    <div class="learn-progress-fill" id="learnProgressFill"></div>
-  </div>
-  <div class="learn-progress-text" id="learnProgressText">0 of 7 lessons completed</div>
-
-  <div class="learn-path">
-    <div class="learn-step" data-step="0">
-      <div class="step-num">1</div>
-      <div class="step-content">
-        <div class="step-header" onclick="toggleLesson(0)">
-          <h4>💰 What is Money?</h4>
-          <span class="step-toggle">+</span>
-        </div>
-        <div class="step-body">
-          <p>Before understanding crypto, you need to understand money itself.</p>
-          <p>Money is anything that a community agrees has value and can be used to trade. Historically, people used shells, gold, and salt. Today we use government-issued paper (called "fiat" currency).</p>
-          <p>The key thing about modern money: <strong>it only has value because we all agree it does.</strong> A €50 note is just a piece of paper. Its value comes from trust in the institution (government/central bank) that issues it.</p>
-          <div class="lesson-takeaway">🎯 Key insight: Money is trust. Crypto replaces institutional trust with mathematical trust.</div>
-          <button class="complete-btn" onclick="completeLesson(0)">Mark Complete ✓</button>
-        </div>
-      </div>
+    <div id="learnPath">
+      <!-- Steps injected by JS -->
     </div>
-
-    <div class="learn-step" data-step="1">
-      <div class="step-num">2</div>
-      <div class="step-content">
-        <div class="step-header" onclick="toggleLesson(1)">
-          <h4>₿ What is Bitcoin?</h4>
-          <span class="step-toggle">+</span>
-        </div>
-        <div class="step-body">
-          <p>Bitcoin was created in 2009 by a person (or group) using the name Satoshi Nakamoto. Nobody knows who they really are.</p>
-          <p>Bitcoin is digital money designed to work without any bank, government, or company in control. Transactions are verified by a global network of computers — not a central authority.</p>
-          <p><strong>Key properties of Bitcoin:</strong></p>
-          <ul>
-            <li>Only 21 million will ever exist (scarcity by design)</li>
-            <li>Anyone can send or receive it without permission</li>
-            <li>No single person or government controls it</li>
-            <li>Transactions are public but identities are pseudonymous</li>
-          </ul>
-          <div class="lesson-takeaway">🎯 Key insight: Bitcoin is digital gold — scarce, decentralised, and not controlled by anyone.</div>
-          <button class="complete-btn" onclick="completeLesson(1)">Mark Complete ✓</button>
-        </div>
-      </div>
+    <div class="learn-done-msg" id="learnDone">
+      You have completed the CIPHER learning path. This is education, not financial advice. Always do your own research before making any decisions.
     </div>
-
-    <div class="learn-step" data-step="2">
-      <div class="step-num">3</div>
-      <div class="step-content">
-        <div class="step-header" onclick="toggleLesson(2)">
-          <h4>⛓️ What is a Blockchain?</h4>
-          <span class="step-toggle">+</span>
-        </div>
-        <div class="step-body">
-          <p>A blockchain is the technology that makes crypto work. Think of it as a shared spreadsheet that thousands of computers each hold a copy of.</p>
-          <p>Every time someone sends crypto, that transaction is added to a "block." That block is then added to the "chain" of all previous transactions — permanently and publicly.</p>
-          <p><strong>Why this matters:</strong> Because thousands of computers all have identical copies, you can't cheat. You can't secretly edit your own copy — the others would immediately reject it.</p>
-          <div class="lesson-takeaway">🎯 Key insight: A blockchain is a shared record book that no one can tamper with — transparency enforced by maths.</div>
-          <button class="complete-btn" onclick="completeLesson(2)">Mark Complete ✓</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="learn-step" data-step="3">
-      <div class="step-num">4</div>
-      <div class="step-content">
-        <div class="step-header" onclick="toggleLesson(3)">
-          <h4>👛 What is a Crypto Wallet?</h4>
-          <span class="step-toggle">+</span>
-        </div>
-        <div class="step-body">
-          <p>A crypto wallet doesn't store your coins like a physical wallet stores cash. Your coins live on the blockchain. Your wallet stores the <strong>key</strong> that proves you own them.</p>
-          <p>Think of it like a mailbox: your wallet address is the mailbox number (public — anyone can send to it). Your private key is the key to open it (secret — never share this).</p>
-          <p><strong>Types of wallets:</strong></p>
-          <ul>
-            <li><strong>Exchange wallets</strong> — easy but the exchange controls your key (like a bank)</li>
-            <li><strong>Software wallets</strong> — apps on your phone, more control but internet-connected</li>
-            <li><strong>Hardware wallets</strong> — physical USB devices, most secure for large amounts</li>
-          </ul>
-          <div class="lesson-takeaway">🎯 Key insight: "Not your keys, not your coins." Anyone who holds your private key owns your crypto.</div>
-          <button class="complete-btn" onclick="completeLesson(3)">Mark Complete ✓</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="learn-step" data-step="4">
-      <div class="step-num">5</div>
-      <div class="step-content">
-        <div class="step-header" onclick="toggleLesson(4)">
-          <h4>🏪 What are Exchanges?</h4>
-          <span class="step-toggle">+</span>
-        </div>
-        <div class="step-body">
-          <p>A crypto exchange is a marketplace where you can buy, sell, and trade cryptocurrencies — usually for regular money (euros, dollars).</p>
-          <p><strong>Centralised exchanges (CEX)</strong> like Coinbase, Binance, and Kraken work like traditional stockbrokers. They're easy to use but hold your keys for you.</p>
-          <p><strong>Decentralised exchanges (DEX)</strong> like Uniswap run on blockchain code with no company behind them. You always keep your keys, but they're harder to use.</p>
-          <p>For beginners: starting with a reputable CEX is sensible. As you learn more, consider moving coins to your own wallet for long-term holding.</p>
-          <div class="lesson-takeaway">🎯 Key insight: Exchanges are doors into crypto. Once inside, consider moving to your own wallet for security.</div>
-          <button class="complete-btn" onclick="completeLesson(4)">Mark Complete ✓</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="learn-step" data-step="5">
-      <div class="step-num">6</div>
-      <div class="step-content">
-        <div class="step-header" onclick="toggleLesson(5)">
-          <h4>⚖️ Benefits &amp; Risks</h4>
-          <span class="step-toggle">+</span>
-        </div>
-        <div class="step-body">
-          <p><strong>Genuine benefits:</strong> Financial access for the unbanked, fast international transfers, programmable money, censorship resistance, and potential for significant returns.</p>
-          <p><strong>Real risks:</strong> Extreme price volatility, irreversible transactions (no chargebacks), complex technology prone to user error, regulatory uncertainty, and prevalence of scams.</p>
-          <p><strong>The honest truth:</strong> Crypto is genuinely useful technology that is also heavily speculated on. The technology will likely survive. Individual coins may not. Never invest more than you can afford to lose completely.</p>
-          <div class="lesson-takeaway">🎯 Key insight: Treat any crypto investment as high-risk. Diversify. Only use money you don't need.</div>
-          <button class="complete-btn" onclick="completeLesson(5)">Mark Complete ✓</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="learn-step" data-step="6">
-      <div class="step-num">7</div>
-      <div class="step-content">
-        <div class="step-header" onclick="toggleLesson(6)">
-          <h4>🚫 Common Mistakes to Avoid</h4>
-          <span class="step-toggle">+</span>
-        </div>
-        <div class="step-body">
-          <ul class="mistake-list">
-            <li><strong>FOMO buying</strong> — buying at all-time highs because everyone else is. This is how most people lose money.</li>
-            <li><strong>Ignoring security</strong> — reusing passwords, skipping 2FA, sharing seed phrases. This has cost people millions.</li>
-            <li><strong>Trusting influencers</strong> — many crypto influencers are paid to promote specific coins. DYOR.</li>
-            <li><strong>Not keeping records</strong> — in most countries, crypto gains are taxable. Keep records of every transaction.</li>
-            <li><strong>Chasing cheap coins</strong> — a coin at $0.001 is not "cheap." Price per coin means nothing without market cap context.</li>
-            <li><strong>Panic selling</strong> — crypto has crashed and recovered multiple times. Selling the bottom locks in a loss.</li>
-            <li><strong>Putting in too much</strong> — your first rule: never invest money you need for rent, food, or emergencies.</li>
-          </ul>
-          <div class="lesson-takeaway">🎯 Key insight: The most successful crypto investors are boring — they buy slowly, hold patiently, and secure carefully.</div>
-          <button class="complete-btn" onclick="completeLesson(6)">Mark Complete ✓</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="learn-complete-msg" id="learnCompleteMsg">
-    🎓 You've completed the CIPHER learning path! Remember: this is education, not financial advice. Always do your own research.
   </div>
 </section>
 
-<!-- ══ FEEDBACK ═══════════════════════════════════════════════════════════ -->
+<!-- ══════════ FEEDBACK ══════════ -->
 <section class="page" id="page-feedback">
   <div class="page-header">
     <div class="page-tag">Your Voice Matters</div>
     <h2 class="page-title">Share Your Feedback</h2>
-    <p class="page-desc">Help us make CIPHER better for beginners everywhere. Takes 2 minutes.</p>
+    <p class="page-desc">Help make CIPHER better for beginners everywhere.</p>
   </div>
-  <div class="feedback-wrap">
-    <iframe
-      src="https://docs.google.com/forms/d/e/1FAIpQLSc8JPRx0_56VhRz70ac_6oCfIcKnR49xpc5_gFmHzsplp12sQ/viewform?usp=publish-editor"
-      id="feedbackFrame"
-      width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0">
-      Loading Google Form…
-    </iframe>
-    <div class="feedback-fallback" id="feedbackFallback">
-      <div class="feedback-icon">💬</div>
-      <h3>We'd love your feedback!</h3>
-      <p>To add your Google Form, replace the iframe <code>src</code> with your form's embed URL.</p>
-      <p>In the meantime, you can reach us via the options below:</p>
-      <div class="feedback-links">
-        <a href="mailto:feedback@cipher.crypto" class="btn-primary">✉️ Send Email</a>
-        <a href="https://github.com" target="_blank" class="btn-outline">⭐ GitHub</a>
-      </div>
+  <div class="page-body">
+    <div class="feedback-frame-wrap">
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLSc8JPRx0_56VhRz70ac_6oCfIcKnR49xpc5_gFmHzsplp12sQ/viewform?usp=publish-editor"
+        width="100%" height="820" frameborder="0" marginheight="0" marginwidth="0"
+        style="display:block">Loading form…</iframe>
     </div>
   </div>
 </section>
@@ -632,16 +1084,748 @@ cat > /mnt/user-data/outputs/cipher/index.html << 'HTMLEOF'
 </main>
 
 <footer>
-  <div class="footer-logo">CIPHER</div>
+  <div class="footer-logo">Cipher</div>
   <div class="footer-links">
-    <a href="#" onclick="navigate('why')">Why Crypto?</a>
+    <a href="#" onclick="navigate('why')">Why Crypto</a>
     <a href="#" onclick="navigate('learn')">Learn</a>
+    <a href="#" onclick="navigate('trade')">Paper Trade</a>
     <a href="#" onclick="navigate('feedback')">Feedback</a>
   </div>
-  <div class="footer-note">DATA VIA YFINANCE · NOT FINANCIAL ADVICE · EDUCATIONAL USE ONLY</div>
+  <div class="footer-note">Data via yfinance &mdash; Not financial advice &mdash; Educational use only</div>
 </footer>
 
-<script src="/static/app.js"></script>
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const API = '';
+let activePage = 'home';
+let pricesCache = null;
+let histChart = null, cmpChart = null, ptEquityChart = null;
+let currentHistCoin = null;
+let cmpSelectedCoins = ['bitcoin','ethereum','solana'];
+let dashboardLoaded = false;
+let ptSide = 'buy';
+let ptPrices = {};
+
+const PT_KEY = 'cipher_pt_v3';
+let pt = loadPT();
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn,.mob-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.page === page);
+  });
+  const el = document.getElementById('page-' + page);
+  if(el) el.classList.add('active');
+  activePage = page;
+  window.scrollTo(0,0);
+
+  if(page === 'news') loadNews();
+  if(page === 'movers') loadMovers();
+  if(page === 'dashboard' && !dashboardLoaded) { loadDashboard(); dashboardLoaded = true; }
+  if(page === 'trade') initTrade();
+  if(page === 'home' && !pricesCache) loadHomeCoins();
+  if(page === 'learn') renderLearn();
+}
+
+function toggleMobile() {
+  document.getElementById('mobileDrawer').classList.toggle('open');
+}
+function closeMobile() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+}
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  if(cmpChart) updateCmpChartTheme();
+}
+
+// ── Mood ──────────────────────────────────────────────────────────────────
+const moodMap = {
+  curious: 'Good instinct. Start with the Learn section — it explains everything from the ground up without any jargon.',
+  confused: 'That is completely normal. Most people feel this way. The Learn section is built exactly for that feeling.',
+  excited: 'Enthusiasm is great. Before anything else, take 15 minutes with the Learn section — it could save you real money.',
+  nervous: 'Healthy scepticism. Read the risks section under "Why Crypto" before doing anything else.'
+};
+function setMood(m) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('moodResp').textContent = moodMap[m] || '';
+}
+
+// ── Formatting ────────────────────────────────────────────────────────────
+function fmtPrice(p) {
+  if(p == null) return '—';
+  if(p >= 1) return '$' + p.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return '$' + p.toFixed(6);
+}
+function fmtChg(c) {
+  if(c == null) return '—';
+  return (c >= 0 ? '+' : '') + c.toFixed(2) + '%';
+}
+function fmtMc(mc) {
+  if(!mc) return '';
+  if(mc >= 1e12) return '$' + (mc/1e12).toFixed(2) + 'T';
+  if(mc >= 1e9)  return '$' + (mc/1e9).toFixed(1) + 'B';
+  if(mc >= 1e6)  return '$' + (mc/1e6).toFixed(0) + 'M';
+  return '$' + mc.toFixed(0);
+}
+function fmtTime(ts) {
+  const d = new Date(ts);
+  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+}
+
+// ── Home: live mini-table ─────────────────────────────────────────────────
+async function loadHomeCoins() {
+  try {
+    const res = await fetch(API + '/api/prices');
+    pricesCache = await res.json();
+    const top = ['bitcoin','ethereum','solana','binancecoin','ripple','cardano','dogecoin','avalanche'];
+    let html = '';
+    top.forEach(id => {
+      const c = pricesCache[id]; if(!c) return;
+      const up = c.change_24h >= 0;
+      html += `<div class="hero-coin-row" onclick="navigate('dashboard')">
+        <img class="cc-logo" src="${c.logo}" onerror="this.style.display='none'">
+        <span class="coin-sym">${c.symbol}</span>
+        <span class="coin-name">${c.name}</span>
+        <span class="coin-price">${fmtPrice(c.price)}</span>
+        <span class="coin-chg ${up?'chg-up':'chg-dn'}">${fmtChg(c.change_24h)}</span>
+      </div>`;
+    });
+    document.getElementById('heroCoins').innerHTML = html;
+    document.getElementById('heroUpdated').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    populatePtSelect();
+  } catch(e) {
+    document.getElementById('heroCoins').innerHTML = '<div class="loading-wrap">Unable to load prices. Is the backend running?</div>';
+  }
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  if(!pricesCache) {
+    try {
+      const res = await fetch(API + '/api/prices');
+      pricesCache = await res.json();
+      populatePtSelect();
+    } catch(e) {
+      document.getElementById('coinGrid').innerHTML = '<div class="loading-wrap">Backend unavailable.</div>';
+      return;
+    }
+  }
+  renderCoinGrid();
+  buildTicker();
+  buildCompareChecks();
+  loadCompare();
+  document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('en-GB');
+}
+
+function renderCoinGrid() {
+  const coins = Object.values(pricesCache);
+  let html = '';
+  coins.forEach(c => {
+    if(!c.price) return;
+    const up = c.change_24h >= 0;
+    html += `<div class="coin-card" onclick="loadHistory('${c.id}')" data-id="${c.id}" style="--card-color:${c.color}">
+      <div class="cc-top">
+        <img class="cc-logo" src="${c.logo}" onerror="this.style.display='none'">
+        <div><div class="cc-sym">${c.symbol}</div><div class="cc-name">${c.name}</div></div>
+      </div>
+      <div class="cc-price">${fmtPrice(c.price)}</div>
+      <div class="cc-chg ${up?'chg-up':'chg-dn'}">${fmtChg(c.change_24h)}</div>
+      <div class="cc-mc">${fmtMc(c.market_cap)}</div>
+    </div>`;
+  });
+  document.getElementById('coinGrid').innerHTML = html || '<div class="loading-wrap">No data available.</div>';
+}
+
+function buildTicker() {
+  const coins = Object.values(pricesCache).filter(c => c.price);
+  let html = '';
+  for(let i=0;i<2;i++) {
+    coins.forEach(c => {
+      const up = c.change_24h >= 0;
+      html += `<div class="tick">${c.symbol} <b>${fmtPrice(c.price)}</b> <em class="${up?'chg-up':'chg-dn'}">${fmtChg(c.change_24h)}</em></div>`;
+    });
+  }
+  document.getElementById('tickerInner').innerHTML = html;
+  document.getElementById('tickerWrap').style.display = '';
+}
+
+async function loadHistory(coinId) {
+  currentHistCoin = coinId;
+  document.querySelectorAll('.coin-card').forEach(c => c.classList.toggle('selected', c.dataset.id === coinId));
+  const panel = document.getElementById('historyPanel');
+  panel.style.display = '';
+  document.getElementById('chartCoinInfo').innerHTML = '<div class="loading-wrap" style="padding:0"><div class="spin"></div></div>';
+
+  await renderHistChart(coinId, 1825);
+
+  // Period buttons
+  const periods = [{label:'1M',days:30},{label:'3M',days:90},{label:'6M',days:180},{label:'1Y',days:365},{label:'2Y',days:730},{label:'5Y',days:1825}];
+  let pbHtml = '';
+  periods.forEach(p => {
+    pbHtml += `<button class="period-btn${p.days===1825?' active':''}" onclick="changePeriod('${coinId}',${p.days},this)">${p.label}</button>`;
+  });
+  document.getElementById('periodBtns').innerHTML = pbHtml;
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+async function renderHistChart(coinId, days) {
+  try {
+    const res = await fetch(`${API}/api/history/${coinId}?days=${days}`);
+    const d = await res.json();
+    const c = pricesCache[coinId] || {};
+
+    document.getElementById('chartCoinInfo').innerHTML = `
+      <img class="chart-logo" src="${d.logo||c.logo||''}" onerror="this.style.display='none'">
+      <div>
+        <div class="chart-name">${d.name}</div>
+        <div class="chart-sym">${d.symbol}/USD</div>
+      </div>`;
+    document.getElementById('chartPrice').textContent = fmtPrice(d.last_price);
+    const ret = d.total_return_pct;
+    document.getElementById('chartBadges').innerHTML = `
+      <span class="badge ${ret>=0?'badge-up':'badge-dn'}">${fmtChg(ret)} total return</span>
+      <span class="badge badge-neu">ATH ${fmtPrice(d.all_time_high)}</span>
+      <span class="badge badge-neu">ATL ${fmtPrice(d.all_time_low)}</span>`;
+
+    const ctx = document.getElementById('histChart').getContext('2d');
+    if(histChart) histChart.destroy();
+    const color = c.color || '#3b82f6';
+    histChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: d.dates,
+        datasets:[{
+          data: d.prices,
+          borderColor: color,
+          backgroundColor: color + '14',
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: true,
+          tension: 0.2,
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        interaction:{intersect:false,mode:'index'},
+        plugins:{legend:{display:false},tooltip:{
+          backgroundColor:'#0d1117',
+          borderColor:'#ffffff22',borderWidth:1,
+          titleColor:'#8a9ab8',bodyColor:'#f0f4ff',
+          titleFont:{family:'DM Mono',size:10},
+          bodyFont:{family:'DM Mono',size:12},
+          callbacks:{label:ctx=>fmtPrice(ctx.raw)}
+        }},
+        scales:{
+          x:{grid:{color:'#ffffff08'},ticks:{color:'#4d5f7a',font:{family:'DM Mono',size:10},maxTicksLimit:8}},
+          y:{grid:{color:'#ffffff08'},ticks:{color:'#4d5f7a',font:{family:'DM Mono',size:10},callback:v=>fmtPrice(v)},position:'right'}
+        }
+      }
+    });
+  } catch(e) {
+    document.getElementById('chartCoinInfo').innerHTML = '<span style="color:var(--t3);font-family:var(--font-mono);font-size:12px">Failed to load history.</span>';
+  }
+}
+
+function changePeriod(coinId, days, btn) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistChart(coinId, days);
+}
+
+// Compare
+function buildCompareChecks() {
+  if(!pricesCache) return;
+  const top = ['bitcoin','ethereum','solana','binancecoin','ripple','cardano','dogecoin','avalanche'];
+  const colors = {bitcoin:'#f0a500',ethereum:'#627eea',solana:'#9945ff',binancecoin:'#f3ba2f',ripple:'#3bcefc',cardano:'#0052cc',dogecoin:'#c2a633',avalanche:'#e84142'};
+  let html = '';
+  top.forEach(id => {
+    const c = pricesCache[id]; if(!c) return;
+    const checked = cmpSelectedCoins.includes(id);
+    html += `<label class="cmp-check-label ${checked?'checked':''}" data-id="${id}">
+      <div class="cmp-dot" style="background:${colors[id]||c.color}"></div>
+      <input type="checkbox" ${checked?'checked':''} onchange="toggleCmpCoin('${id}',this)">
+      ${c.symbol}
+    </label>`;
+  });
+  document.getElementById('compareChecks').innerHTML = html;
+}
+
+function toggleCmpCoin(id, el) {
+  el.closest('.cmp-check-label').classList.toggle('checked', el.checked);
+  if(el.checked) { if(!cmpSelectedCoins.includes(id)) cmpSelectedCoins.push(id); }
+  else cmpSelectedCoins = cmpSelectedCoins.filter(c=>c!==id);
+  loadCompare();
+}
+
+async function loadCompare() {
+  if(!cmpSelectedCoins.length) return;
+  try {
+    const res = await fetch(`${API}/api/compare?coins=${cmpSelectedCoins.join(',')}&days=365`);
+    const d = await res.json();
+    renderCmpChart(d);
+  } catch(e) {}
+}
+
+function renderCmpChart(d) {
+  const ctx = document.getElementById('cmpChart').getContext('2d');
+  if(cmpChart) cmpChart.destroy();
+  const datasets = Object.entries(d.coins).map(([id,coin])=>({
+    label: coin.symbol,
+    data: coin.normalized,
+    borderColor: coin.color,
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    pointRadius: 0,
+    tension: 0.2,
+  }));
+  cmpChart = new Chart(ctx,{
+    type:'line',
+    data:{labels:d.dates, datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{intersect:false,mode:'index'},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#0d1117',borderColor:'#ffffff22',borderWidth:1,
+          titleColor:'#8a9ab8',bodyColor:'#f0f4ff',
+          titleFont:{family:'DM Mono',size:10},bodyFont:{family:'DM Mono',size:11},
+          callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.raw?.toFixed(1)}
+        }
+      },
+      scales:{
+        x:{grid:{color:'#ffffff08'},ticks:{color:'#4d5f7a',font:{family:'DM Mono',size:10},maxTicksLimit:8}},
+        y:{grid:{color:'#ffffff08'},ticks:{color:'#4d5f7a',font:{family:'DM Mono',size:10},callback:v=>v.toFixed(0)},position:'right'}
+      }
+    }
+  });
+}
+
+// Milestones
+async function loadMilestones(coinId) {
+  const panel = document.getElementById('msPanel');
+  panel.innerHTML = '<div class="loading-wrap"><div class="spin"></div>Loading…</div>';
+  try {
+    const res = await fetch(`${API}/api/milestones/${coinId}`);
+    const d = await res.json();
+    let html = `<div class="milestones-grid">
+      <div class="ms-card"><div class="ms-card-label">All-time high</div><div class="ms-card-val">${fmtPrice(d.ath?.price)}</div><div class="ms-card-date">${d.ath?.date||''}</div></div>
+      <div class="ms-card"><div class="ms-card-label">All-time low</div><div class="ms-card-val">${fmtPrice(d.atl?.price)}</div><div class="ms-card-date">${d.atl?.date||''}</div></div>
+      <div class="ms-card"><div class="ms-card-label">Best day</div><div class="ms-card-val chg-up">+${d.best_day?.change_pct?.toFixed(2)||0}%</div><div class="ms-card-date">${d.best_day?.date||''}</div></div>
+      <div class="ms-card"><div class="ms-card-label">Worst day</div><div class="ms-card-val chg-dn">${d.worst_day?.change_pct?.toFixed(2)||0}%</div><div class="ms-card-date">${d.worst_day?.date||''}</div></div>
+    </div>`;
+    html += `<div class="chart-wrap"><table class="yearly-table"><thead><tr>
+      <th>Year</th><th>Start price</th><th>End price</th><th>Return</th><th></th>
+    </tr></thead><tbody>`;
+    const maxAbs = Math.max(...d.yearly_returns.map(y=>Math.abs(y.return_pct)));
+    d.yearly_returns.forEach(y=>{
+      const up = y.return_pct >= 0;
+      const barW = Math.min(120, Math.round(Math.abs(y.return_pct)/maxAbs*120));
+      html += `<tr>
+        <td>${y.year}</td>
+        <td>${fmtPrice(y.start_price)}</td>
+        <td>${fmtPrice(y.end_price)}</td>
+        <td class="${up?'chg-up':'chg-dn'}">${fmtChg(y.return_pct)}</td>
+        <td><div class="bar-cell"><div class="bar-fill" style="width:${barW}px;background:${up?'var(--green)':'var(--red)'}"></div></div></td>
+      </tr>`;
+    });
+    html += '</tbody></table></div>';
+    panel.innerHTML = html;
+  } catch(e) {
+    panel.innerHTML = '<div class="loading-wrap">Could not load milestones.</div>';
+  }
+}
+
+const origLoadHistory = loadHistory;
+window.loadHistory = async function(coinId) {
+  await origLoadHistory(coinId);
+  loadMilestones(coinId);
+};
+
+async function refreshDashboard() {
+  pricesCache = null; dashboardLoaded = false;
+  document.getElementById('coinGrid').innerHTML = '<div class="loading-wrap"><div class="spin"></div>Refreshing…</div>';
+  await loadDashboard();
+  dashboardLoaded = true;
+}
+
+// ── News ──────────────────────────────────────────────────────────────────
+async function loadNews() {
+  const c = document.getElementById('newsContainer');
+  c.innerHTML = '<div class="loading-wrap"><div class="spin"></div>Loading news…</div>';
+  try {
+    const res = await fetch(API + '/api/news');
+    const d = await res.json();
+    if(!d.articles?.length) { c.innerHTML = '<div class="loading-wrap">No articles found.</div>'; return; }
+    let html = '<div class="news-grid">';
+    d.articles.forEach(a => {
+      const src = d.source?.includes('cointelegraph')?'Cointelegraph':d.source?.includes('coindesk')?'CoinDesk':'Decrypt';
+      html += `<div class="news-item" onclick="window.open('${a.link}','_blank')">
+        <div>
+          <div class="news-source">${src}</div>
+          <div class="news-title">${a.title}</div>
+          <div class="news-summary">${a.summary}</div>
+        </div>
+        <div class="news-date">${a.date ? new Date(a.date).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : ''}</div>
+      </div>`;
+    });
+    html += '</div>';
+    c.innerHTML = html;
+  } catch(e) {
+    c.innerHTML = '<div class="loading-wrap">Could not load news. Check that the backend is running.</div>';
+  }
+}
+
+// ── Movers ────────────────────────────────────────────────────────────────
+async function loadMovers() {
+  const c = document.getElementById('moversContainer');
+  c.innerHTML = '<div class="loading-wrap"><div class="spin"></div>Loading movers…</div>';
+  try {
+    const res = await fetch(API + '/api/movers');
+    const d = await res.json();
+    let html = '<div class="movers-wrap">';
+    html += '<div><div class="movers-col-label up">Top Gainers</div>';
+    d.gainers.forEach(m => {
+      html += `<div class="mover-row">
+        <img class="mover-logo" src="${m.logo}" onerror="this.style.display='none'">
+        <div class="mover-info">
+          <div class="mover-sym">${m.symbol} — ${fmtPrice(m.price)}</div>
+          <div class="mover-expl">${m.explanation}</div>
+        </div>
+        <div class="mover-chg chg-up">${fmtChg(m.change_24h)}</div>
+      </div>`;
+    });
+    html += '</div><div><div class="movers-col-label dn">Top Losers</div>';
+    d.losers.forEach(m => {
+      html += `<div class="mover-row">
+        <img class="mover-logo" src="${m.logo}" onerror="this.style.display='none'">
+        <div class="mover-info">
+          <div class="mover-sym">${m.symbol} — ${fmtPrice(m.price)}</div>
+          <div class="mover-expl">${m.explanation}</div>
+        </div>
+        <div class="mover-chg chg-dn">${fmtChg(m.change_24h)}</div>
+      </div>`;
+    });
+    html += '</div></div>';
+    html += `<div style="font-family:var(--font-mono);font-size:10px;color:var(--t3);margin-top:8px">Updated ${d.updated}</div>`;
+    c.innerHTML = html;
+  } catch(e) {
+    c.innerHTML = '<div class="loading-wrap">Could not load movers.</div>';
+  }
+}
+
+// ── Learn ─────────────────────────────────────────────────────────────────
+const lessons = [
+  {title:'What is Money?', body:`<p>Before understanding crypto, you need to understand money itself.</p>
+    <p>Money is anything a community agrees has value and can be used for trade. Historically, people used shells, gold, and salt. Today we use government-issued paper — called fiat currency.</p>
+    <p>Modern money only has value because we all agree it does. A €50 note is a piece of paper. Its value comes from trust in the institution that issues it.</p>
+    <div class="takeaway">Key insight — Money is trust. Crypto replaces institutional trust with mathematical trust.</div>`},
+  {title:'What is Bitcoin?', body:`<p>Bitcoin was created in 2009 by a person or group using the name Satoshi Nakamoto. Nobody knows who they really are.</p>
+    <p>Bitcoin is digital money designed to work without any bank, government, or company in control. Transactions are verified by a global network of computers — not a central authority.</p>
+    <ul><li>Only 21 million will ever exist — scarcity by design</li><li>Anyone can send or receive it without permission</li><li>No single entity controls it</li><li>Transactions are public but identities are pseudonymous</li></ul>
+    <div class="takeaway">Key insight — Bitcoin is digital gold: scarce, decentralised, and not controlled by anyone.</div>`},
+  {title:'What is a Blockchain?', body:`<p>A blockchain is the technology that makes crypto work. Think of it as a shared spreadsheet that thousands of computers each hold a copy of.</p>
+    <p>Every time someone sends crypto, that transaction is added to a block. That block is then added to the chain of all previous transactions — permanently and publicly.</p>
+    <p>Because thousands of computers hold identical copies, you cannot cheat. You cannot secretly edit your own copy — the others would immediately reject it.</p>
+    <div class="takeaway">Key insight — A blockchain is a shared record book that no one can tamper with. Transparency enforced by mathematics.</div>`},
+  {title:'What is a Crypto Wallet?', body:`<p>A crypto wallet does not store your coins like a physical wallet stores cash. Your coins live on the blockchain. Your wallet stores the key that proves you own them.</p>
+    <p>Think of it like a mailbox: your wallet address is the mailbox number (public — anyone can send to it). Your private key is the key to open it (secret — never share this).</p>
+    <ul><li><strong>Exchange wallets</strong> — easy but the exchange controls your key</li><li><strong>Software wallets</strong> — apps on your phone, more control but internet-connected</li><li><strong>Hardware wallets</strong> — physical devices, most secure for large amounts</li></ul>
+    <div class="takeaway">Key insight — "Not your keys, not your coins." Anyone who holds your private key owns your crypto.</div>`},
+  {title:'What are Exchanges?', body:`<p>A crypto exchange is a marketplace where you buy, sell, and trade cryptocurrencies — usually for regular money.</p>
+    <p>Centralised exchanges like Coinbase, Binance, and Kraken work like traditional stockbrokers. They are easy to use but hold your keys for you.</p>
+    <p>Decentralised exchanges like Uniswap run on blockchain code with no company behind them. You always keep your keys, but they are harder to use.</p>
+    <div class="takeaway">Key insight — Exchanges are the door into crypto. Once inside, consider moving coins to your own wallet for long-term holding.</div>`},
+  {title:'Benefits and Risks', body:`<p><strong>Genuine benefits:</strong> Financial access for the unbanked, fast international transfers, programmable money, censorship resistance, and potential for significant returns.</p>
+    <p><strong>Real risks:</strong> Extreme price volatility, irreversible transactions, complex technology prone to user error, regulatory uncertainty, and prevalence of scams.</p>
+    <p>The honest truth: crypto is genuinely useful technology that is also heavily speculated on. The technology will likely survive. Individual coins may not. Never invest more than you can afford to lose completely.</p>
+    <div class="takeaway">Key insight — Treat any crypto investment as high-risk. Only use money you do not need.</div>`},
+  {title:'Common Mistakes to Avoid', body:`<ul class="mistake-list">
+    <li><strong>FOMO buying</strong> — buying at all-time highs because everyone else is. This is how most people lose money.</li>
+    <li><strong>Ignoring security</strong> — reusing passwords, skipping 2FA, sharing seed phrases. This has cost people millions.</li>
+    <li><strong>Trusting influencers</strong> — many crypto influencers are paid to promote specific coins. Do your own research.</li>
+    <li><strong>Not keeping records</strong> — in most countries, crypto gains are taxable. Keep records of every transaction.</li>
+    <li><strong>Chasing cheap coins</strong> — a coin at $0.001 is not "cheap." Price per coin means nothing without market cap context.</li>
+    <li><strong>Panic selling</strong> — crypto has crashed and recovered multiple times. Selling the bottom locks in a loss.</li>
+    <li><strong>Investing too much</strong> — your first rule: never use money you need for rent, food, or emergencies.</li>
+    </ul>
+    <div class="takeaway">Key insight — Successful crypto investors are boring. They buy slowly, hold patiently, and secure carefully.</div>`}
+];
+
+let learnProgress = JSON.parse(localStorage.getItem('cipher_learn') || '[]');
+
+function renderLearn() {
+  const path = document.getElementById('learnPath');
+  let html = '';
+  lessons.forEach((l,i) => {
+    const done = learnProgress.includes(i);
+    html += `<div class="learn-step ${done?'done':''}" id="lstep-${i}">
+      <div class="step-header" onclick="toggleLesson(${i})">
+        <div class="step-num">${done?'&#10003;':'0'+(i+1)}</div>
+        <div class="step-title">${l.title}</div>
+        <div class="step-tog" id="stog-${i}">+</div>
+      </div>
+      <div class="step-body" id="sbody-${i}">${l.body}
+        <button class="complete-btn ${done?'done':''}" id="scbtn-${i}" onclick="completeLesson(${i})">${done?'Completed':'Mark Complete'}</button>
+      </div>
+    </div>`;
+  });
+  path.innerHTML = html;
+  updateLearnProgress();
+}
+
+function toggleLesson(i) {
+  const body = document.getElementById('sbody-'+i);
+  const tog = document.getElementById('stog-'+i);
+  const open = body.classList.toggle('open');
+  tog.classList.toggle('open', open);
+  tog.textContent = open ? '' : '+';
+}
+
+function completeLesson(i) {
+  if(learnProgress.includes(i)) return;
+  learnProgress.push(i);
+  localStorage.setItem('cipher_learn', JSON.stringify(learnProgress));
+  const step = document.getElementById('lstep-'+i);
+  step.classList.add('done');
+  step.querySelector('.step-num').innerHTML = '&#10003;';
+  const btn = document.getElementById('scbtn-'+i);
+  btn.textContent = 'Completed'; btn.classList.add('done');
+  updateLearnProgress();
+}
+
+function updateLearnProgress() {
+  const pct = learnProgress.length / lessons.length * 100;
+  document.getElementById('learnFill').style.width = pct + '%';
+  document.getElementById('learnText').textContent = learnProgress.length + ' of ' + lessons.length + ' lessons completed';
+  if(learnProgress.length === lessons.length) document.getElementById('learnDone').style.display = 'block';
+}
+
+// ── Paper Trading ─────────────────────────────────────────────────────────
+function loadPT() {
+  const saved = localStorage.getItem(PT_KEY);
+  if(saved) try { return JSON.parse(saved); } catch(e) {}
+  return { cash: 10000, holdings: {}, trades: [], equityHistory: [{ts: Date.now(), val: 10000}] };
+}
+function savePT() { localStorage.setItem(PT_KEY, JSON.stringify(pt)); }
+
+function initTrade() {
+  if(!pricesCache) { loadHomeCoins().then(() => { populatePtSelect(); ptUpdatePrice(); renderPT(); }); }
+  else { populatePtSelect(); ptUpdatePrice(); renderPT(); }
+  renderPtEquityChart();
+}
+
+function populatePtSelect() {
+  if(!pricesCache) return;
+  const sel = document.getElementById('ptCoinSelect');
+  if(!sel) return;
+  const coins = Object.values(pricesCache).filter(c=>c.price).sort((a,b)=>a.symbol.localeCompare(b.symbol));
+  sel.innerHTML = coins.map(c => `<option value="${c.id}">${c.symbol} — ${c.name}</option>`).join('');
+  coins.forEach(c => { ptPrices[c.id] = c.price; });
+  ptUpdatePrice();
+}
+
+function ptSetSide(side) {
+  ptSide = side;
+  document.getElementById('ptBuyTab').classList.toggle('active', side==='buy');
+  document.getElementById('ptSellTab').classList.toggle('active', side==='sell');
+  const btn = document.getElementById('ptExecBtn');
+  btn.className = 'pt-exec-btn ' + side;
+  btn.textContent = 'Execute ' + (side==='buy'?'Buy':'Sell');
+  ptCalcQty();
+}
+
+function ptUpdatePrice() {
+  const sel = document.getElementById('ptCoinSelect');
+  if(!sel) return;
+  const id = sel.value;
+  const price = ptPrices[id] || (pricesCache?.[id]?.price);
+  document.getElementById('ptCurrentPrice').textContent = price ? fmtPrice(price) : '—';
+  ptCalcQty();
+}
+
+function ptCalcQty() {
+  const sel = document.getElementById('ptCoinSelect');
+  if(!sel) return;
+  const id = sel.value;
+  const price = ptPrices[id] || pricesCache?.[id]?.price;
+  const amt = parseFloat(document.getElementById('ptAmount')?.value);
+  const qty = (price && amt) ? (amt / price) : null;
+  document.getElementById('ptQty').textContent = qty ? qty.toFixed(6) : '—';
+}
+
+function ptExecute() {
+  const sel = document.getElementById('ptCoinSelect');
+  const id = sel.value;
+  const amt = parseFloat(document.getElementById('ptAmount').value);
+  const price = ptPrices[id] || pricesCache?.[id]?.price;
+  const msg = document.getElementById('ptMsg');
+  msg.style.display = 'none';
+
+  if(!id || !price || !amt || amt <= 0) {
+    showPtMsg('Please select a coin and enter a valid amount.', 'err'); return;
+  }
+  const qty = amt / price;
+
+  if(ptSide === 'buy') {
+    if(amt > pt.cash) { showPtMsg('Insufficient cash. Available: ' + fmtPrice(pt.cash), 'err'); return; }
+    pt.cash -= amt;
+    pt.holdings[id] = (pt.holdings[id] || 0) + qty;
+    showPtMsg('Bought ' + qty.toFixed(6) + ' ' + (pricesCache[id]?.symbol||id) + ' at ' + fmtPrice(price), 'ok');
+  } else {
+    const held = pt.holdings[id] || 0;
+    if(qty > held + 0.000001) { showPtMsg('Insufficient holdings. You hold ' + held.toFixed(6) + ' ' + (pricesCache[id]?.symbol||id), 'err'); return; }
+    const sellQty = Math.min(qty, held);
+    pt.cash += sellQty * price;
+    pt.holdings[id] = Math.max(0, held - sellQty);
+    if(pt.holdings[id] < 0.000001) delete pt.holdings[id];
+    showPtMsg('Sold ' + sellQty.toFixed(6) + ' ' + (pricesCache[id]?.symbol||id) + ' at ' + fmtPrice(price), 'ok');
+  }
+
+  pt.trades.unshift({ side: ptSide, coin: id, sym: pricesCache[id]?.symbol||id, qty, price, amt, ts: Date.now() });
+  const portVal = ptCalcPortfolioValue();
+  pt.equityHistory.push({ ts: Date.now(), val: portVal + pt.cash });
+  if(pt.equityHistory.length > 200) pt.equityHistory.shift();
+  savePT();
+  document.getElementById('ptAmount').value = '';
+  renderPT();
+  renderPtEquityChart();
+}
+
+function showPtMsg(text, type) {
+  const msg = document.getElementById('ptMsg');
+  msg.textContent = text; msg.className = 'pt-msg ' + type; msg.style.display = 'block';
+  setTimeout(() => { msg.style.display = 'none'; }, 4000);
+}
+
+function ptCalcPortfolioValue() {
+  let v = 0;
+  Object.entries(pt.holdings).forEach(([id, qty]) => {
+    const price = ptPrices[id] || pricesCache?.[id]?.price || 0;
+    v += qty * price;
+  });
+  return v;
+}
+
+function ptSellAll(id) {
+  const qty = pt.holdings[id] || 0;
+  if(!qty) return;
+  const price = ptPrices[id] || pricesCache?.[id]?.price || 0;
+  const proceeds = qty * price;
+  pt.cash += proceeds;
+  delete pt.holdings[id];
+  pt.trades.unshift({ side:'sell', coin:id, sym:pricesCache?.[id]?.symbol||id, qty, price, amt:proceeds, ts:Date.now() });
+  const portVal = ptCalcPortfolioValue();
+  pt.equityHistory.push({ ts:Date.now(), val:portVal+pt.cash });
+  savePT();
+  renderPT();
+  renderPtEquityChart();
+  showPtMsg('Sold all ' + (pricesCache?.[id]?.symbol||id), 'ok');
+}
+
+function renderPT() {
+  const holdVal = ptCalcPortfolioValue();
+  const totalVal = pt.cash + holdVal;
+  const pnl = totalVal - 10000;
+  const pnlPct = (pnl/10000)*100;
+
+  document.getElementById('ptCash').textContent = fmtPrice(pt.cash);
+  document.getElementById('ptPortVal').textContent = fmtPrice(totalVal);
+  document.getElementById('ptPnl').innerHTML = `<span class="${pnl>=0?'chg-up':'chg-dn'}">${pnl>=0?'+':''}${fmtPrice(pnl)} (${fmtChg(pnlPct)})</span>`;
+  document.getElementById('ptHoldingsVal').textContent = fmtPrice(holdVal);
+
+  // Holdings
+  const holdEntries = Object.entries(pt.holdings).filter(([,q])=>q>0);
+  document.getElementById('ptHoldCount').textContent = holdEntries.length + ' position' + (holdEntries.length!==1?'s':'');
+
+  if(!holdEntries.length) {
+    document.getElementById('ptHoldings').innerHTML = '<div class="trade-empty">No positions yet. Place your first trade.</div>';
+  } else {
+    let html = `<table class="holdings-table"><thead><tr>
+      <th>Coin</th><th>Qty</th><th>Price</th><th>Value</th><th>P&L</th><th></th>
+    </tr></thead><tbody>`;
+    holdEntries.forEach(([id,qty]) => {
+      const price = ptPrices[id] || pricesCache?.[id]?.price || 0;
+      const val = qty * price;
+      // Find avg cost from trades
+      const buyTrades = pt.trades.filter(t=>t.coin===id&&t.side==='buy');
+      const totalCost = buyTrades.reduce((s,t)=>s+(t.price*t.qty),0);
+      const totalQty = buyTrades.reduce((s,t)=>s+t.qty,0);
+      const avgCost = totalQty ? totalCost/totalQty : price;
+      const pl = (price - avgCost) * qty;
+      const plPct = avgCost ? ((price-avgCost)/avgCost*100) : 0;
+      html += `<tr>
+        <td><strong style="color:var(--t1)">${pricesCache?.[id]?.symbol||id}</strong></td>
+        <td>${qty.toFixed(4)}</td>
+        <td>${fmtPrice(price)}</td>
+        <td>${fmtPrice(val)}</td>
+        <td class="${pl>=0?'chg-up':'chg-dn'}">${fmtChg(plPct)}</td>
+        <td><button class="sell-quick-btn" onclick="ptSellAll('${id}')">Sell all</button></td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    document.getElementById('ptHoldings').innerHTML = html;
+  }
+
+  // Trade log
+  if(!pt.trades.length) {
+    document.getElementById('ptTradeLog').innerHTML = '<div class="trade-empty">No trades yet.</div>';
+  } else {
+    let html = '<div class="trade-log">';
+    pt.trades.slice(0,50).forEach(t => {
+      html += `<div class="trade-entry">
+        <span class="trade-side-${t.side}">${t.side.toUpperCase()}</span>
+        <span class="trade-sym">${t.sym}</span>
+        <span class="trade-price">${fmtPrice(t.price)}</span>
+        <span class="trade-time">${fmtTime(t.ts)}</span>
+      </div>`;
+    });
+    html += '</div>';
+    document.getElementById('ptTradeLog').innerHTML = html;
+  }
+}
+
+function renderPtEquityChart() {
+  const ctx = document.getElementById('ptEquityChart');
+  if(!ctx) return;
+  if(ptEquityChart) ptEquityChart.destroy();
+  const data = pt.equityHistory.map(e => e.val);
+  const startVal = 10000;
+  const color = (data[data.length-1]||startVal) >= startVal ? '#22c55e' : '#ef4444';
+  ptEquityChart = new Chart(ctx,{
+    type:'line',
+    data:{
+      labels: pt.equityHistory.map(e=>fmtTime(e.ts)),
+      datasets:[{data, borderColor:color, backgroundColor:color+'18', borderWidth:1.5, pointRadius:0, fill:true, tension:0.3}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{
+        backgroundColor:'#0d1117',borderColor:'#ffffff22',borderWidth:1,
+        titleColor:'#8a9ab8',bodyColor:'#f0f4ff',
+        titleFont:{family:'DM Mono',size:9},bodyFont:{family:'DM Mono',size:11},
+        callbacks:{label:ctx=>fmtPrice(ctx.raw)}
+      }},
+      scales:{
+        x:{display:false},
+        y:{grid:{color:'#ffffff08'},ticks:{color:'#4d5f7a',font:{family:'DM Mono',size:9},callback:v=>'$'+Math.round(v/1000)+'k'},position:'right'}
+      }
+    }
+  });
+}
+
+function ptReset() {
+  if(!confirm('Reset your paper trading account? All trades and holdings will be cleared.')) return;
+  pt = { cash:10000, holdings:{}, trades:[], equityHistory:[{ts:Date.now(),val:10000}] };
+  savePT(); renderPT(); renderPtEquityChart();
+  showPtMsg('Account reset to $10,000.00', 'ok');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+navigate('home');
+</script>
 </body>
 </html>
-HTMLEOF
